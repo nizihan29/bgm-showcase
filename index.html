@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="gold">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>可可糯米团子 · ACGN</title>
+<meta name="description" content="可可糯米团子的 ACGN 记录 — 最爱角色、在看番剧、收藏与评分">
+<link rel="preconnect" href="https://lain.bgm.tv">
+<link rel="preconnect" href="https://api.bgm.tv">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- 作品封面墙（JS 注入） -->
+<div class="cover-wall" id="cover-wall" aria-hidden="true"></div>
+<div class="wall-shade" aria-hidden="true"></div>
+<div class="grid-lines" aria-hidden="true"></div>
+
+<!-- 主题切换 -->
+<div class="theme-switch" role="group" aria-label="主题切换">
+  <button class="sw-gold" data-theme="gold" title="金色宫殿" aria-pressed="true"></button>
+  <button class="sw-sea"  data-theme="sea"  title="海天一色" aria-pressed="false"></button>
+  <button class="sw-cafe" data-theme="cafe" title="雨天咖啡馆" aria-pressed="false"></button>
+</div>
+
+<main>
+
+  <header class="hero">
+    <div class="avatar-wrap">
+      <div class="avatar-glow" aria-hidden="true"></div>
+      <img id="avatar" class="avatar" alt="头像" width="132" height="132">
+    </div>
+    <h1 id="nickname" class="nickname">加载中…</h1>
+    <p id="sign" class="sign"></p>
+    <a id="profile-link" class="pill" href="https://bgm.tv/user/m1n" target="_blank" rel="noopener noreferrer">
+      <span class="pill-dot" aria-hidden="true"></span>
+      <span id="pill-text">bgm.tv/user/m1n</span>
+    </a>
+  </header>
+
+  <section class="block">
+    <h2 class="block-title">
+      <span class="zh">最爱角色</span>
+      <span class="en">FAVORITE CHARACTERS</span>
+    </h2>
+    <div class="fav-grid" id="favorites"></div>
+  </section>
+
+  <div class="dual">
+    <section class="block panel">
+      <h2 class="block-title">
+        <span class="zh">最近在看</span>
+        <span class="en">WATCHING</span>
+      </h2>
+      <div class="watch-list" id="watching"></div>
+    </section>
+
+    <section class="block panel">
+      <h2 class="block-title">
+        <span class="zh">看过分布</span>
+        <span class="en">COMPLETED</span>
+      </h2>
+      <div class="donut-wrap">
+        <div class="donut" id="donut"></div>
+        <div class="donut-hub">
+          <strong id="donut-total">—</strong>
+          <span>部看过</span>
+        </div>
+      </div>
+      <ul class="legend" id="legend"></ul>
+    </section>
+  </div>
+
+  <section class="block">
+    <h2 class="block-title">
+      <span class="zh">评分最高</span>
+      <span class="en">TOP RATED</span>
+    </h2>
+    <div class="top-groups" id="top-rated"></div>
+  </section>
+
+  <footer class="footer">
+    <p class="copyright">
+      数据与图片来自 <a href="https://bgm.tv" target="_blank" rel="noopener noreferrer">Bangumi 番组计划</a>
+    </p>
+    <p class="copyright copyright-dim">
+      作品封面与角色立绘的版权归各自原作者及版权方所有
+    </p>
+  </footer>
+
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
