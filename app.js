@@ -1250,6 +1250,7 @@
     const head = $('.site-head');
     const progress = $('#progress');
     const toTop = $('#to-top');
+    const printBtn = $('#print-page');
     let lastY = window.scrollY;
     const onScroll = () => {
       const y = window.scrollY;
@@ -1273,6 +1274,10 @@
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
+    if (printBtn) printBtn.addEventListener('click', () => window.print());
+    window.addEventListener('beforeprint', () => {
+      $$('img[loading="lazy"]').forEach((img) => { img.loading = 'eager'; });
+    });
   }
 
   function initHeroParallax() {

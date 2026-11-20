@@ -17,6 +17,7 @@
 - `content.js` 集中个人文案；`README.md` 写清怎么换角色、换文案、刷新数据、部署。
 - 本地字体 subset（Inter / Mochiy Pop / Noto Display），主页面不再请求 Google Fonts。
 - 首屏封面与统计数字静态预渲染；小尺寸封面改用 200px 源图，减少图片传输。
+- 页脚加“打印 / PDF”，配套 A4 打印样式（隐藏菜单/搜索/收藏墙，处理分页和懒加载封面）。
 - `site.webmanifest` + 主屏图标、`404.html`、`.nojekyll`、`robots.txt`。
 - `scripts/check_site.py` + `.github/workflows/check.yml` 做数据/HTML/资源自检。
 - iOS 滚动锁、Safari 焦点环、跨引擎字体和详情封面加载都单独修过。

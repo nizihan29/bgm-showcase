@@ -2836,6 +2836,21 @@ a.year-col { cursor: pointer; }
   font-size: 8px;
   color: rgba(251, 248, 241, .5);
 }
+.footer-actions { display: flex; align-items: center; gap: 8px; }
+.print-link {
+  padding: 7px 11px;
+  background: transparent;
+  color: var(--paper);
+  border: 1.5px solid rgba(251, 248, 241, .5);
+  font-family: var(--font-en);
+  font-weight: 800;
+  font-size: 8px;
+  letter-spacing: .1em;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background .2s, border-color .2s;
+}
+.print-link:hover { background: var(--red); border-color: var(--red); }
 .to-top {
   font-family: var(--font-en);
   font-weight: 800;
@@ -3361,4 +3376,68 @@ section[id] { scroll-margin-top: 92px; }
   }
   .js .reveal { opacity: 1; transform: none; }
   .ticker-track { animation: none; }
+}
+
+/* ============================================================
+   Print
+   ============================================================ */
+@media print {
+  @page { size: A4; margin: 12mm; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  html, body { background: #fff !important; color: #111 !important; }
+  body { font-size: 10pt; line-height: 1.6; }
+  .paper, .dots, .confetti, .progress, .site-head, .menu, .menu-stamp,
+  .ticker, .to-top-fab, .hero-art, .hero-actions, .scroll-cue, .skip,
+  .feature, .wishlist, #wishlist, .archive, .words, .detail, .footer-big,
+  .footer-manifesto, .footer-nav, .footer-actions, .print-link, .to-top,
+  .theme-switch { display: none !important; }
+  main { max-width: none; padding: 0; }
+  .hero { display: block; min-height: 0; padding: 0 0 8mm; }
+  .hero-copy { max-width: none; }
+  .hero-title { font-size: 56pt; line-height: 1; color: #c7000a; text-shadow: none; }
+  .hero-title em { color: #c7000a; text-shadow: none; }
+  .hero-title-wrap { margin: 4mm 0 3mm; }
+  .hero-furigana { display: none; }
+  .hero-tagline { max-width: none; font-size: 11pt; color: #333; border-left: 2px solid #c7000a; }
+  .hero-stats { border-top: 1px solid #999; padding-top: 3mm; }
+  .hero-stats dt { color: #555; }
+  .sec-head { border-bottom: 1px solid #999; padding-bottom: 2mm; margin-bottom: 4mm; break-after: avoid; }
+  .sec-no { background: #c7000a !important; color: #fff !important; border: 0; box-shadow: none; }
+  .sec-en { color: #c7000a; text-shadow: none; font-size: 22pt; }
+  .sec-title h2 { color: #111; }
+  .sec-jp { color: #c7000a; }
+  .section { max-width: none; padding: 6mm 0; }
+  .reveal { opacity: 1 !important; transform: none !important; }
+  .profile-grid { grid-template-columns: 1fr 1fr; gap: 4mm; }
+  .profile-card, .now-card, .fact-strip, .panel, .top-column, .number-row,
+  .char-pic, .watch-row { box-shadow: none !important; background: #fff !important; }
+  .profile-card, .now-card, .panel, .top-column { border: 1px solid #bbb; }
+  .now-grid { gap: 3mm; }
+  .now-card { break-inside: avoid; padding: 2mm; }
+  .tag { background: #fff; box-shadow: none; }
+  .fact-strip { border: 1px solid #bbb; }
+  .fact-strip div { border-color: #ddd; }
+  .char-grid { grid-template-columns: repeat(5, 1fr); gap: 3mm; }
+  .char-card { grid-column: auto !important; width: auto !important; margin: 0 !important; transform: none !important; break-inside: avoid; }
+  .char-pic { border: 1px solid #999; padding: 1mm 1mm 5mm; }
+  .char-pic::before, .char-no, .char-open { display: none !important; }
+  .char-note { min-height: 0; }
+  .watch-board { border-top: 1px solid #999; }
+  .watch-row { break-inside: avoid; grid-template-columns: 7mm 14mm 1fr 35mm 22mm; padding: 2mm 0; }
+  .watch-progress { display: block !important; }
+  .number-row { border: 1px solid #bbb; }
+  .record-grid { grid-template-columns: 1fr 1fr; gap: 3mm; }
+  .panel-rating, .panel-year, .panel-studio, .panel-diff { grid-column: span 2; }
+  .panel-diff { display: none; }
+  .panel { break-inside: avoid; padding: 3mm; }
+  .top-grid { grid-template-columns: repeat(3, 1fr); gap: 3mm; }
+  .top-item { grid-template-columns: 20px 1fr auto; }
+  .top-cover { display: none !important; }
+  .top-column { break-inside: avoid; }
+  .top-head { background: #111 !important; color: #fff !important; }
+  .footer { background: #fff !important; color: #111 !important; padding: 4mm 0 0; }
+  .footer-inner { border-top: 1px solid #999; padding: 3mm 0; }
+  .footer-meta p, .footer-bottom p { color: #555; }
+  a { color: #111 !important; text-decoration: none; }
+  * { animation: none !important; transition: none !important; }
 }
