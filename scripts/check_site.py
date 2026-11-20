@@ -18,7 +18,8 @@ HTML_FILES = ["index.html", "404.html"]
 REQUIRED_FILES = [
     "index.html", "style.css", "app.js", "content.js", "data.json",
     "404.html", "robots.txt", ".nojekyll", "assets/preview.jpg",
-    "scripts/fetch_bgm.py",
+    "site.webmanifest", "assets/icon-192.png", "assets/icon-512.png",
+    "assets/apple-touch-icon.png", "scripts/fetch_bgm.py",
 ]
 DATA_COLLECTION_KEYS = {
     "subject_id", "subject_type", "type", "rate", "ep_status", "updated_at", "subject",
@@ -76,6 +77,25 @@ def check_files() -> None:
     for name in REQUIRED_FILES:
         if not os.path.isfile(os.path.join(ROOT, name)):
             fail(f"missing required file: {name}")
+
+
+def check_manifest() -> None:
+    path = os.path.join(ROOT, "site.webmanifest")
+    with open(path, encoding="utf-8") as fh:
+        manifest = json.load(fh)
+    if not manifest.get("name") or not manifest.get("short_name"):
+        fail("site.webmanifest: name/short_name missing")
+    if manifest.get("start_url") != "./":
+        fail("site.webmanifest: start_url should be ./")
+    icons = manifest.get("icons") or []
+    if not icons:
+        fail("site.webmanifest: no icons")
+    for icon in icons:
+        src = icon.get("src", "")
+        if not src or not os.path.isfile(os.path.join(ROOT, src)):
+            fail(f"site.webmanifest: icon missing: {src}")
+        if "sizes" not in icon or "type" not in icon:
+            fail(f"site.webmanifest: icon metadata incomplete: {src}")
 
 
 def check_html(name: str) -> Doc:
@@ -165,6 +185,7 @@ def check_data() -> dict:
 
 def main() -> int:
     check_files()
+    check_manifest()
     index = check_html("index.html")
     check_html("404.html")
     data = check_data()

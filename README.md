@@ -105,6 +105,7 @@ https://<你的用户名>.github.io/bgm-showcase/
 ## 技术说明
 
 - 纯静态：`index.html` + `style.css` + `app.js` + `content.js` + `data.json`
+- 带 `site.webmanifest`、192/512 主屏图标和 `apple-touch-icon`；可以“添加到主屏幕”，但没有做离线缓存
 - 零依赖、零构建；`scripts/fetch_bgm.py` 只用 Python 标准库
 - 图片直接引用 `lain.bgm.tv` 的公开封面，`loading="lazy"`；加载失败会自动替换成占位图
 - `data.json` 约 890 KB（未压缩）；页面首屏只加载 hero / profile 所需图片
