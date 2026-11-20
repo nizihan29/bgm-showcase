@@ -68,7 +68,7 @@
   const bgmCharacter = (id) => 'https://bgm.tv/character/' + encodeURIComponent(id);
   const titleOf = (s) => (s && (s.name_cn || s.name)) || '未知作品';
 
-  const state = { data: null, stats: null, archiveItems: [], filter: 'all', total: 0, query: '', results: [], archiveLimit: 48, archiveBound: false, detailLast: null };
+  const state = { data: null, stats: null, archiveItems: [], filter: 'all', total: 0, query: '', results: [], archiveLimit: 48, archiveBound: false, detailLast: null, detailHash: '' };
 
   /* ---------------- boot ---------------- */
   init();
@@ -89,6 +89,7 @@
     }
     initReveal();
     initSpy();
+    initDeepLink();
   }
 
   /* ---------------- stats ---------------- */
@@ -903,6 +904,15 @@
     renderArchiveView();
   }
 
+  function initDeepLink() {
+    const match = String(location.hash || '').match(/^#work-(\d+)$/);
+    if (!match || !state.stats) return;
+    const id = Number(match[1]);
+    if (state.stats.cols.some((c) => c.subject_id === id)) {
+      openDetail(id, null, { push: false });
+    }
+  }
+
   function initDetail() {
     const detail = $('#detail');
     if (!detail) return;
@@ -915,6 +925,19 @@
 
     const link = $('#detail-link');
     if (link) link.addEventListener('click', () => setTimeout(() => closeDetail(), 60));
+
+    const copy = $('#detail-copy');
+    if (copy) copy.addEventListener('click', copyDetailLink);
+
+    window.addEventListener('popstate', () => {
+      const match = String(location.hash || '').match(/^#work-(\d+)$/);
+      if (match) {
+        const id = Number(match[1]);
+        if (state.stats && state.stats.cols.some((c) => c.subject_id === id)) openDetail(id, null, { push: false });
+      } else if (detail.classList.contains('is-open')) {
+        closeDetail(false, { history: false });
+      }
+    });
 
     document.addEventListener('keydown', (e) => {
       if (!detail.classList.contains('is-open')) return;
@@ -929,7 +952,7 @@
     });
   }
 
-  function openDetail(id, trigger) {
+  function openDetail(id, trigger, opts = {}) {
     const detail = $('#detail');
     if (!detail || !state.stats) return;
     const c = state.stats.cols.find((x) => x.subject_id === id);
@@ -976,6 +999,7 @@
     const link = $('#detail-link');
     if (link) link.href = bgmSubject(s.id);
 
+    if (!detail.classList.contains('is-open')) state.detailHash = location.hash || '';
     state.detailLast = trigger || document.activeElement;
     detail.classList.add('is-open');
     detail.setAttribute('aria-hidden', 'false');
@@ -983,17 +1007,24 @@
     lockScroll();
     const card = $('.detail-card', detail);
     if (card) card.scrollTop = 0;
+    if (opts.push !== false && location.hash !== '#work-' + id) {
+      history.pushState({ detail: id }, '', '#work-' + id);
+    }
     const close = $('#detail-close');
     if (close) setTimeout(() => close.focus({ preventScroll: true }), 60);
   }
 
-  function closeDetail(restore = true) {
+  function closeDetail(restore = true, opts = {}) {
     const detail = $('#detail');
     if (!detail) return;
     detail.classList.remove('is-open');
     detail.setAttribute('aria-hidden', 'true');
     document.body.classList.remove('detail-open');
     unlockScroll();
+    if (opts.history !== false && location.hash.indexOf('#work-') === 0) {
+      const back = state.detailHash && state.detailHash !== location.hash ? state.detailHash : '';
+      history.replaceState(null, '', location.pathname + location.search + back);
+    }
     if (restore && state.detailLast && state.detailLast.focus) {
       state.detailLast.focus({ preventScroll: true });
     }
@@ -1039,6 +1070,32 @@
     const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (target) target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
     setTimeout(() => input.focus({ preventScroll: true }), reduce ? 0 : 700);
+  }
+
+  function copyDetailLink() {
+    const button = $('#detail-copy');
+    const done = () => {
+      if (!button) return;
+      const original = '复制链接';
+      button.textContent = '已复制';
+      setTimeout(() => { button.textContent = original; }, 1600);
+    };
+    const fallback = () => {
+      const area = document.createElement('textarea');
+      area.value = location.href;
+      area.setAttribute('readonly', '');
+      area.style.position = 'fixed';
+      area.style.opacity = '0';
+      document.body.appendChild(area);
+      area.select();
+      try { document.execCommand('copy'); done(); } catch (e) {}
+      area.remove();
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(location.href).then(done).catch(fallback);
+    } else {
+      fallback();
+    }
   }
 
   function renderWords(stats) {
