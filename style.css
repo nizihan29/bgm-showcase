@@ -497,6 +497,14 @@ ul { margin: 0; padding: 0; list-style: none; }
 .menu-link:hover::after { opacity: 1; transform: none; }
 .menu-link:hover { border-bottom-color: var(--paper); }
 
+.menu :focus-visible,
+.detail :focus-visible {
+  outline: 2px solid var(--yellow);
+  outline-offset: 2px;
+  box-shadow: none;
+}
+.menu-link:focus-visible { outline-offset: -2px; }
+
 .menu-foot {
   display: flex;
   justify-content: space-between;
