@@ -3359,8 +3359,6 @@ section[id] { scroll-margin-top: 92px; }
 
 @media (max-width: 380px) {
   .hero-title { font-size: 3.2rem; }
-  .char-grid { grid-template-columns: 1fr; }
-  .char-card:last-child:nth-child(odd) { grid-column: auto !important; width: auto; margin-inline: 0; }
   .archive-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
