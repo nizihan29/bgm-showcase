@@ -1,78 +1,103 @@
-# Bangumi ACGN Showcase
+# KOKO / ACGN Archive
 
-个人 ACGN 展示页 — 数据实时来自 Bangumi 公开 API，无需后端、无需 token。
+个人 ACGN 档案馆 — 以动画官网的视觉语法（纸白点阵、朱红标题、印章菜单、贴纸卡片、荧光纸屑）重做的 Bangumi 兴趣展示页。没有视频，没有后端，也没有构建步骤。
 
-## 预览
+数据来自 [Bangumi 番组计划](https://bgm.tv) 的公开 API，页面读取的是仓库里的 `data.json` 快照；换账号、换本命、换文案都不需要改 JS。
+
+![桌面预览](assets/preview.jpg)
+
+## 本地预览
 
 ```bash
-# 在项目目录下启动一个静态服务器
+cd bgm-showcase
 python3 -m http.server 8000
-# 然后浏览器打开 http://localhost:8000
+# 打开 http://localhost:8000
 ```
 
-## 页面内容
+不要直接双击 `index.html`：浏览器会拦截 `fetch('data.json')`。
 
-| 区块 | 数据来源 |
-|---|---|
-| 顶部资料（头像 / 昵称 / 签名） | `GET /v0/users/{username}` |
-| 最爱角色竖幅（5 张立绘） | `GET /v0/characters/{id}` |
-| 收藏统计圆环 + 数字 | `GET /v0/users/{username}/collections?subject_type=N` |
-| 完整收藏入口 | 跳转 `bgm.tv/user/{username}` |
+## 页面里有什么
 
-## 怎么改内容
+| 区块 | 内容 | 数据来源 |
+|---|---|---|
+| HERO | 站名、总收藏 / 评分 / 均分、封面拼贴、本命头像 | `profile` + `collections` + `featured` |
+| PROFILE | 头像、签名、简介、口味标签、四个“此刻”卡片 | `profile`、`collections`、`characters` |
+| FEATURED | 最近沉迷：《学生会也有洞！》专属大卡 | `featured` + 对应收藏 |
+| FAVORITES | 5 位最爱角色：生日、身高、血型、私货短句 | `characters` + `content.js` |
+| WATCHING | 最近在看的进度、话数、更新时间 | `collections?type=3` |
+| RECORDS | 总览数字、评分分布、收藏状态、年份分布、口味关键词、评分分歧 | 全量收藏计算 |
+| TOP RATED | 动画 / 书籍 / 游戏各自的前 5 名 | 我的评分排序 |
+| ARCHIVE | 48 张精选封面，可按类型筛选 | 评分最高 + 最近更新 |
+| WORDS | 从短评里抽的三句话 | `collections.comment` |
 
-### 换最爱角色
+## 更新数据
 
-编辑 `app.js` 顶部的 `CONFIG.characters`：
+```bash
+python3 scripts/fetch_bgm.py
+```
+
+脚本会重新抓取公开收藏、5 位角色和 featured 条目，覆盖 `data.json`。全程只读，不需要 token；请求之间有间隔，遇到 429/5xx 会退避重试。
+
+- 换 Bangumi 用户名：`BGM_USERNAME=yourname python3 scripts/fetch_bgm.py`
+- 换最爱角色：同时改 `scripts/fetch_bgm.py` 里的 `CHARACTER_IDS` 和 `content.js` 里的 `favoriteOrder`
+- 换 featured 作品：改 `scripts/fetch_bgm.py` 里的 `FEATURED_SUBJECT`，再改 `index.html` 里 `#feature-link` 的默认链接即可
+
+`data.json` 是提交进仓库的快照，所以页面不依赖实时 API；想每天自动更新，可以加一条 GitHub Actions 定时跑上面的脚本。
+
+## 改“我”的部分
+
+所有个人文案集中在 `content.js`，不需要翻 HTML：
 
 ```js
-characters: [
-  { id: 3575,  zh: '御坂美琴' },
-  // ...
-],
+window.SITE_CONTENT = {
+  tagline: '首屏一句话',
+  intro: '关于我的简介',
+  quote: '首屏小纸条 / 签名',
+  favoriteOrder: [3575, 24760, 19041, 14823, 53770],
+  characterNotes: { 3575: '角色卡上的一句私货' },
+  links: [{ label: 'BANGUMI', href: 'https://bgm.tv/user/m1n' }],
+};
 ```
 
-`id` 的获取方式：打开 `bgm.tv` 搜索角色 → 进入角色页 → 地址栏 `bgm.tv/character/**3575**` 里的数字就是 id。
-`zh` 是显示用的中文名，留空则显示 Bangumi 上的原名。
+文件底部留了 TODO：最近循环的歌、喜欢的监督/公司/声优、圣地巡礼、三句想说的话、其他社交主页。想加板块时，先补数据，再加一个 `<section>` 和对应的 render 函数即可。
 
-### 改用户名 / 收藏分类
+## 设计说明
 
-同样在 `app.js` 的 `CONFIG` 里：
+- **配色**：纸白 `#fbf8f1`、朱红 `#c7000a / #7d0000`、墨黑 `#1c1a17`，青色/粉色/黄色只做点缀。
+- **字体**：Inter（英文标题）、Noto Sans SC（中文）、Mochiy Pop One（日文小标签），来自 Google Fonts；被墙或离线时会回退到系统字体。
+- **菜单**：右上角印章按钮，环形 MENU 文字 + 三横；打开后全屏红底白点，菜单项逐条弹入，支持 Esc、焦点循环和滚动锁。
+- **卡片**：白底、粗描边、硬阴影、轻微旋转和胶带；数据区保持白卡，先保证可读，再谈风格。
+- **动效**：滚动 reveal、跑马灯、柱状图生长、封面悬停；全部尊重 `prefers-reduced-motion`。
+- **响应式**：1440 / 1024 / 768 / 390 四档验证；平板的 5 张角色卡会重排成居中的 3+2。
 
-```js
-username: 'm1n',        // bgm.tv/user/xxxx 的 xxxx
-subjects: [             // 想展示哪些分类
-  { type: 2, zh: '动画', color: '#a78bfa' },
-  { type: 1, zh: '书籍', color: '#f472b6' },
-  { type: 4, zh: '游戏', color: '#38bdf8' },
-],
-```
-
-分类编码：`1`=书籍 `2`=动画 `3`=音乐 `4`=游戏 `6`=三次元。
+参考的是动画官网的**语法**（版式、字重、红白关系、印章菜单、纸屑），没有使用官网的 logo、插画或视频素材。
 
 ## 部署到 GitHub Pages
 
 ```bash
-git init
 git add .
-git commit -m "init: bangumi showcase"
+git commit -m "feat: anime-official-site style ACGN archive"
 git branch -M main
 git remote add origin https://github.com/<你的用户名>/bgm-showcase.git
 git push -u origin main
 ```
 
-然后在 GitHub 仓库 → **Settings → Pages** → Source 选 `main` 分支 `/ (root)` → 保存。
+仓库 **Settings → Pages → Source** 选 `main` / `(root)`，几十秒后访问：
 
-几十秒后访问：`https://<你的用户名>.github.io/bgm-showcase/`
+```text
+https://<你的用户名>.github.io/bgm-showcase/
+```
+
+`data.json`、`content.js`、`scripts/` 都会一起发布；没有构建步骤。
 
 ## 技术说明
 
-- 纯静态：`index.html` + `style.css` + `app.js`，零依赖、零构建
-- 数据：Bangumi 官方 API（`api.bgm.tv`），CORS 全开放，浏览器直连
-- 缓存：无（每次打开拉最新数据，共 9 个请求）
-- 响应式：桌面 5 列 → 平板 3 列 → 手机 2 列
+- 纯静态：`index.html` + `style.css` + `app.js` + `content.js` + `data.json`
+- 零依赖、零构建；`scripts/fetch_bgm.py` 只用 Python 标准库
+- 图片直接引用 `lain.bgm.tv` 的公开封面，`loading="lazy"`；加载失败会自动替换成占位图
+- `data.json` 约 900 KB（未压缩）；页面首屏只加载 hero / profile 所需图片
+- 兼容现代浏览器；不支持 `IntersectionObserver` 时会直接显示全部内容
 
-## 注意
+## 版权
 
-- 页面展示的是**公开收藏统计**，需要 Bangumi 账号的收藏为公开状态
-- 若 API 返回失败，对应区块会留空/显示占位，不会白屏
+本页是个人兴趣展示，非官方站点。作品封面、角色画像的版权归各自原作者及版权方所有；数据与图片来自 Bangumi。页面代码可自由修改自用。
