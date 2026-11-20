@@ -16,6 +16,7 @@
 - 数据改为 `data.json` 快照，`scripts/fetch_bgm.py` 可重抓；每周一有 GitHub Actions 自动刷新。
 - `content.js` 集中个人文案；`README.md` 写清怎么换角色、换文案、刷新数据、部署。
 - 本地字体 subset（Inter / Mochiy Pop / Noto Display），主页面不再请求 Google Fonts。
+- 首屏封面与统计数字静态预渲染；小尺寸封面改用 200px 源图，减少图片传输。
 - `site.webmanifest` + 主屏图标、`404.html`、`.nojekyll`、`robots.txt`。
 - `scripts/check_site.py` + `.github/workflows/check.yml` 做数据/HTML/资源自检。
 - iOS 滚动锁、Safari 焦点环、跨引擎字体和详情封面加载都单独修过。
