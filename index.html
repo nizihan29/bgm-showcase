@@ -73,9 +73,10 @@
       <a class="menu-link" href="#feature" data-i="2"><span class="menu-no">02</span><span class="menu-en">FEATURED</span><span class="menu-zh">最近沉迷</span></a>
       <a class="menu-link" href="#favorites" data-i="3"><span class="menu-no">03</span><span class="menu-en">FAVORITES</span><span class="menu-zh">最爱角色</span></a>
       <a class="menu-link" href="#watching" data-i="4"><span class="menu-no">04</span><span class="menu-en">WATCHING</span><span class="menu-zh">最近在看</span></a>
-      <a class="menu-link" href="#records" data-i="5"><span class="menu-no">05</span><span class="menu-en">RECORDS</span><span class="menu-zh">观看记录</span></a>
-      <a class="menu-link" href="#top-rated" data-i="6"><span class="menu-no">06</span><span class="menu-en">TOP RATED</span><span class="menu-zh">评分最高</span></a>
-      <a class="menu-link" href="#archive" data-i="7"><span class="menu-no">07</span><span class="menu-en">ARCHIVE</span><span class="menu-zh">收藏墙</span></a>
+      <a class="menu-link" href="#wishlist" data-i="5"><span class="menu-no">05</span><span class="menu-en">WISHLIST</span><span class="menu-zh">想看清单</span></a>
+      <a class="menu-link" href="#records" data-i="6"><span class="menu-no">06</span><span class="menu-en">RECORDS</span><span class="menu-zh">观看记录</span></a>
+      <a class="menu-link" href="#top-rated" data-i="7"><span class="menu-no">07</span><span class="menu-en">TOP RATED</span><span class="menu-zh">评分最高</span></a>
+      <a class="menu-link" href="#archive" data-i="8"><span class="menu-no">08</span><span class="menu-en">ARCHIVE</span><span class="menu-zh">收藏墙</span></a>
     </nav>
     <div class="menu-foot">
       <div class="menu-social">
@@ -230,10 +231,37 @@
     <div class="watch-board" id="watch-board"></div>
   </section>
 
+  <!-- ================= WISHLIST ================= -->
+  <section class="section" id="wishlist">
+    <header class="sec-head reveal">
+      <span class="sec-no">05</span>
+      <div class="sec-title"><p class="sec-en">WISHLIST</p><h2>想看清单</h2></div>
+      <p class="sec-jp">つぎに見たいもの</p>
+    </header>
+
+    <div class="wish-layout reveal">
+      <aside class="wish-lead">
+        <p class="wish-kicker">NEXT UP / 最近加入</p>
+        <strong id="wish-total">—</strong>
+        <span class="wish-unit">部想看</span>
+        <p class="wish-note" id="wish-note"></p>
+        <a class="wish-link" href="https://bgm.tv/user/m1n/collections" target="_blank" rel="noopener noreferrer">去 BANGUMI 看全部 <b aria-hidden="true">↗</b></a>
+      </aside>
+
+      <div class="wish-shelf">
+        <div class="wish-grid" id="wish-grid" tabindex="0" aria-label="最近加入想看的作品"></div>
+        <div class="wish-arrows">
+          <button type="button" class="shelf-btn" data-dir="-1" aria-label="向前看">←</button>
+          <button type="button" class="shelf-btn" data-dir="1" aria-label="向后看">→</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ================= RECORDS ================= -->
   <section class="section" id="records">
     <header class="sec-head reveal">
-      <span class="sec-no">05</span>
+      <span class="sec-no">06</span>
       <div class="sec-title"><p class="sec-en">RECORDS</p><h2>观看记录</h2></div>
       <p class="sec-jp">これまでのきろく</p>
     </header>
@@ -264,9 +292,15 @@
       </article>
 
       <article class="panel panel-diff reveal">
-        <div class="panel-head"><h3>和大众口味的分歧</h3><span>MY SCORE VS. COMMUNITY</span></div>
-        <div class="diff-list" id="deviation-list"></div>
-        <p class="panel-note">只统计我打过分、且条目有均分的作品；差值为我的评分减去 Bangumi 均分。</p>
+        <div class="panel-head"><h3>口味地图</h3><span>MY SCORE VS. COMMUNITY</span></div>
+        <div class="taste-grid">
+          <div class="taste-scatter" id="taste-scatter"></div>
+          <div class="taste-side">
+            <p class="taste-caption">分歧最大的 8 部 <span>8 BIGGEST GAPS</span></p>
+            <div class="diff-list" id="deviation-list"></div>
+          </div>
+        </div>
+        <p class="panel-note" id="taste-note"></p>
       </article>
     </div>
   </section>
@@ -274,7 +308,7 @@
   <!-- ================= TOP RATED ================= -->
   <section class="section" id="top-rated">
     <header class="sec-head reveal">
-      <span class="sec-no">06</span>
+      <span class="sec-no">07</span>
       <div class="sec-title"><p class="sec-en">TOP RATED</p><h2>评分最高</h2></div>
       <p class="sec-jp">いちばん好きなもの</p>
     </header>
@@ -285,7 +319,7 @@
   <!-- ================= ARCHIVE ================= -->
   <section class="section archive" id="archive">
     <header class="sec-head reveal">
-      <span class="sec-no">07</span>
+      <span class="sec-no">08</span>
       <div class="sec-title"><p class="sec-en">ARCHIVE</p><h2>收藏墙</h2></div>
       <p class="sec-jp">ぜんぶのきろく</p>
     </header>
@@ -329,6 +363,7 @@
     <div class="footer-nav">
       <a href="#profile">PROFILE</a>
       <a href="#favorites">FAVORITES</a>
+      <a href="#wishlist">WISHLIST</a>
       <a href="#records">RECORDS</a>
       <a href="#archive">ARCHIVE</a>
     </div>

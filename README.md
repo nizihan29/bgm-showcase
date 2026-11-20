@@ -25,7 +25,8 @@ python3 -m http.server 8000
 | FEATURED | 最近沉迷：《学生会也有洞！》专属大卡 | `featured` + 对应收藏 |
 | FAVORITES | 5 位最爱角色：生日、身高、血型、私货短句 | `characters` + `content.js` |
 | WATCHING | 最近在看的进度、话数、更新时间 | `collections?type=3` |
-| RECORDS | 总览数字、评分分布、收藏状态、年份分布、口味关键词、评分分歧 | 全量收藏计算 |
+| WISHLIST | 472 部想看里的最近 8 部，横向书架 | `collections?type=1` |
+| RECORDS | 总览数字、评分分布、收藏状态、年份分布、口味关键词、口味散点图 + 评分分歧 | 全量收藏计算 |
 | TOP RATED | 动画 / 书籍 / 游戏各自的前 5 名 | 我的评分排序 |
 | ARCHIVE | 48 张精选封面，可按类型筛选 | 评分最高 + 最近更新 |
 | WORDS | 从短评里抽的三句话 | `collections.comment` |

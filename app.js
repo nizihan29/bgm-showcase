@@ -131,6 +131,15 @@
       .sort((a, b) => String(b.updated_at).localeCompare(String(a.updated_at)))
       .slice(0, 5);
 
+    const wish = cols
+      .filter((c) => c.type === 1)
+      .sort((a, b) => String(b.updated_at).localeCompare(String(a.updated_at)) || ((b.subject.score || 0) - (a.subject.score || 0)));
+
+    const compared = rated.filter((c) => c.subject.score > 0);
+    const avgDiff = compared.length
+      ? compared.reduce((sum, c) => sum + (c.rate - c.subject.score), 0) / compared.length
+      : 0;
+
     const comments = cols
       .filter((c) => c.comment && c.comment.length >= 6)
       .sort((a, b) => String(b.updated_at).localeCompare(String(a.updated_at)))
@@ -140,7 +149,7 @@
 
     return {
       cols, byType, byStatus, dist, rated, avg, top, buckets, tags,
-      deviations, watching, comments, completed,
+      deviations, watching, wish, avgDiff, comments, completed,
       total: cols.length,
       tagPeak: tags[0] ? tags[0].count : 1,
       maxDist: Math.max(1, ...Object.values(dist)),
@@ -157,7 +166,9 @@
     renderFeatured(data, stats);
     renderFavorites(data);
     renderWatching(stats);
+    renderWishlist(data, stats);
     renderRecords(stats);
+    renderTasteMap(stats);
     renderTop(stats);
     renderArchive(data, stats);
     renderWords(stats);
@@ -413,6 +424,36 @@
     }).join('');
   }
 
+  function renderWishlist(data, stats) {
+    const section = $('#wishlist');
+    if (!section) return;
+    if (!stats.wish.length) { section.hidden = true; return; }
+
+    setText('#wish-total', fmtInt(stats.wish.length));
+    setText('#wish-note', CONTENT.wishlistNote || '');
+
+    const grid = $('#wish-grid');
+    if (!grid) return;
+    grid.innerHTML = stats.wish.slice(0, 8).map((c, i) => {
+      const s = c.subject;
+      return '<a class="wish-card" href="' + esc(bgmSubject(s.id)) + '" target="_blank" rel="noopener noreferrer">' +
+        '<span class="wish-pic">' +
+          '<img src="' + esc(imgSrc(s)) + '" alt="' + esc(titleOf(s)) + '" loading="lazy" decoding="async" referrerpolicy="no-referrer">' +
+          '<span class="wish-no">' + String(i + 1).padStart(2, '0') + '</span>' +
+        '</span>' +
+        '<span class="wish-info"><strong>' + esc(titleOf(s)) + '</strong><small>' + esc((s.date || '').slice(0, 4) || '—') + ' · 均分 ' + esc(s.score || '—') + '</small></span>' +
+      '</a>';
+    }).join('');
+
+    $$('.shelf-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const step = Math.max(220, grid.clientWidth * 0.75);
+        const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        grid.scrollBy({ left: Number(btn.dataset.dir) * step, behavior: reduce ? 'auto' : 'smooth' });
+      });
+    });
+  }
+
   function renderRecords(stats) {
     const nums = $('#number-row');
     if (nums) {
@@ -500,6 +541,62 @@
           '<span class="diff-badge ' + (d > 0 ? 'up' : 'down') + '">' + (d > 0 ? '+' : '') + d.toFixed(1) + '</span>' +
         '</a>';
       }).join('') || '<p class="panel-note">样本还不够形成分歧。</p>';
+    }
+  }
+
+  function renderTasteMap(stats) {
+    const box = $('#taste-scatter');
+    if (!box) return;
+    const points = stats.cols.filter((c) => c.rate > 0 && c.subject.score > 0);
+    if (!points.length) {
+      box.innerHTML = '<p class="panel-note">评分样本还不够。</p>';
+      return;
+    }
+
+    const W = 640, H = 380;
+    const m = { l: 46, r: 18, t: 22, b: 40 };
+    const xMin = 4, xMax = 10, yMin = 4, yMax = 10;
+    const px = (v) => m.l + ((clamp(v, xMin, xMax) - xMin) / (xMax - xMin)) * (W - m.l - m.r);
+    const py = (v) => H - m.b - ((clamp(v, yMin, yMax) - yMin) / (yMax - yMin)) * (H - m.t - m.b);
+    const colorOf = (type) => type === 2 ? '#c7000a' : type === 1 ? '#0b8ea6' : '#b8860b';
+
+    const xTicks = [4, 6, 8, 10];
+    const yTicks = [4, 6, 8, 10];
+    const grid = xTicks.map((t) => '<line x1="' + px(t) + '" y1="' + py(yMin) + '" x2="' + px(t) + '" y2="' + py(yMax) + '" stroke="#d8cebc" stroke-dasharray="2 5"></line>' +
+      '<text x="' + px(t) + '" y="' + (H - m.b + 15) + '" text-anchor="middle" class="scatter-tick">' + t + '</text>').join('') +
+      yTicks.map((t) => '<line x1="' + px(xMin) + '" y1="' + py(t) + '" x2="' + px(xMax) + '" y2="' + py(t) + '" stroke="#d8cebc" stroke-dasharray="2 5"></line>' +
+      '<text x="' + (m.l - 9) + '" y="' + (py(t) + 2.5) + '" text-anchor="end" class="scatter-tick">' + t + '</text>').join('');
+
+    const sorted = points.slice().sort((a, b) => Math.abs(a.rate - a.subject.score) - Math.abs(b.rate - b.subject.score));
+    const dots = sorted.map((c) => {
+      const s = c.subject;
+      return '<circle class="scatter-dot" cx="' + px(c.subject.score).toFixed(1) + '" cy="' + py(c.rate).toFixed(1) + '" r="2.7" fill="' + colorOf(c.subject_type) + '">' +
+        '<title>' + esc(titleOf(s)) + ' — 我 ' + c.rate + ' / 均分 ' + s.score + '</title>' +
+      '</circle>';
+    }).join('');
+
+    box.innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="评分散点图：横轴是 Bangumi 均分，纵轴是我的评分，共 ' + points.length + ' 个评分点">' +
+      '<rect x="' + m.l + '" y="' + m.t + '" width="' + (W - m.l - m.r) + '" height="' + (H - m.t - m.b) + '" fill="#fffdf8" stroke="#1c1a17" stroke-width="1.5"></rect>' +
+      grid +
+      '<line x1="' + px(4) + '" y1="' + py(4) + '" x2="' + px(10) + '" y2="' + py(10) + '" stroke="#c7000a" stroke-width="1.5" stroke-dasharray="5 5" opacity=".55"></line>' +
+      '<text x="' + px(8.25) + '" y="' + (py(8.8) - 4) + '" class="scatter-side-label" fill="#c7000a">口味一致线</text>' +
+      '<text x="' + (m.l + 8) + '" y="' + (m.t + 16) + '" class="scatter-side-label">我比大众更喜欢 ↗</text>' +
+      '<text x="' + (W - m.r - 8) + '" y="' + (H - m.b - 8) + '" text-anchor="end" class="scatter-side-label">大众比我更喜欢 ↗</text>' +
+      dots +
+      '<text x="' + (W - m.r) + '" y="' + (H - 5) + '" text-anchor="end" class="scatter-axis-label">大众均分 →</text>' +
+      '<text x="14" y="' + (m.t + 4) + '" class="scatter-axis-label">我的评分 ↑</text>' +
+    '</svg>' +
+    '<div class="taste-legend">' +
+      '<span><i style="background:#c7000a"></i>动画</span>' +
+      '<span><i style="background:#0b8ea6"></i>书籍</span>' +
+      '<span><i style="background:#b8860b"></i>游戏</span>' +
+      '<span class="taste-legend-count">' + fmtInt(points.length) + ' 个评分点</span>' +
+    '</div>';
+
+    const note = $('#taste-note');
+    if (note) {
+      const sign = stats.avgDiff >= 0 ? '+' : '−';
+      note.textContent = fmtInt(points.length) + ' 个评分点 · 我的平均分与大众均分差 ' + sign + Math.abs(stats.avgDiff).toFixed(2) + ' 分 · 越靠上越喜欢，越靠右大众评价越高';
     }
   }
 
@@ -632,6 +729,7 @@
       'GAME ' + fmtInt(stats.byType[4] || 0),
       'TOTAL ' + fmtInt(stats.total),
       'RATED ' + fmtInt(stats.rated.length),
+      'WISH ' + fmtInt(stats.wish.length),
       'AVG ' + stats.avg.toFixed(2),
       'ARCHIVE 1965 — 2026',
     ];
