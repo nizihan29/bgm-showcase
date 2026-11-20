@@ -383,7 +383,7 @@
           '<a class="char-open" href="' + esc(bgmCharacter(c.id)) + '" target="_blank" rel="noopener noreferrer" aria-label="在 Bangumi 查看 ' + esc(charName(c)) + '">↗</a>' +
         '</div>' +
         '<div class="char-info">' +
-          '<p class="char-jp">' + esc(c.name || '') + '</p>' +
+          '<p class="char-jp" lang="ja">' + esc(c.name || '') + '</p>' +
           '<h3 class="char-name">' + esc(charName(c)) + '</h3>' +
           '<p class="char-note">' + esc(note) + '</p>' +
           '<dl class="char-meta">' +
