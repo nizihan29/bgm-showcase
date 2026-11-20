@@ -48,7 +48,7 @@
   const bgmCharacter = (id) => 'https://bgm.tv/character/' + encodeURIComponent(id);
   const titleOf = (s) => (s && (s.name_cn || s.name)) || '未知作品';
 
-  const state = { data: null, stats: null, archiveItems: [], filter: 'all', total: 0 };
+  const state = { data: null, stats: null, archiveItems: [], filter: 'all', total: 0, query: '', results: [], archiveBound: false };
 
   /* ---------------- boot ---------------- */
   init();
@@ -656,48 +656,140 @@
 
     state.archiveItems = picks.slice(0, 48);
     state.total = stats.total;
+    state.stats = stats;
 
-    grid.innerHTML = state.archiveItems.map((c) => {
-      const s = c.subject;
-      const score = c.rate || (s.score ? s.score.toFixed(1) : '');
-      return '<a class="arch-item" data-type="' + c.subject_type + '" href="' + esc(bgmSubject(s.id)) + '" target="_blank" rel="noopener noreferrer" title="' + esc(titleOf(s)) + '">' +
-        '<img src="' + esc((s.images && (s.images.small || s.images.common)) || PH) + '" alt="' + esc(titleOf(s)) + '" loading="lazy" decoding="async" referrerpolicy="no-referrer">' +
-        (score ? '<span class="arch-score">' + esc(score) + '</span>' : '') +
-        '<span class="arch-info"><span class="arch-title">' + esc(titleOf(s)) + '</span></span>' +
-      '</a>';
-    }).join('');
-
-    const counts = { all: state.archiveItems.length, 2: 0, 1: 0, 4: 0 };
-    state.archiveItems.forEach((c) => { counts[c.subject_type] = (counts[c.subject_type] || 0) + 1; });
-    const filterButtons = $$('#archive-filters .filter');
-    filterButtons.forEach((btn) => {
-      const f = btn.dataset.filter;
-      const span = $('span', btn);
-      if (span) span.textContent = counts[f] || 0;
-      btn.classList.toggle('is-on', f === 'all');
-      btn.setAttribute('aria-pressed', String(f === 'all'));
-      btn.addEventListener('click', () => applyArchiveFilter(f));
-    });
-    if ($('#archive-count')) $('#archive-count').textContent = counts.all + ' / ' + fmtInt(stats.total) + ' SHOWN';
+    initArchiveControls();
+    renderArchiveView();
 
     const more = $('.archive-more span');
     if (more) more.textContent = '全部 ' + fmtInt(stats.total) + ' 部收藏';
   }
 
+  function archItemHTML(c) {
+    const s = c.subject;
+    const score = c.rate || (s.score ? s.score.toFixed(1) : '');
+    return '<a class="arch-item" data-type="' + c.subject_type + '" href="' + esc(bgmSubject(s.id)) + '" target="_blank" rel="noopener noreferrer" title="' + esc(titleOf(s)) + '">' +
+      '<img src="' + esc((s.images && (s.images.small || s.images.common)) || PH) + '" alt="' + esc(titleOf(s)) + '" loading="lazy" decoding="async" referrerpolicy="no-referrer">' +
+      (score ? '<span class="arch-score">' + esc(score) + '</span>' : '') +
+      '<span class="arch-info"><span class="arch-title">' + esc(titleOf(s)) + '</span></span>' +
+    '</a>';
+  }
+
+  function initArchiveControls() {
+    if (state.archiveBound) return;
+    state.archiveBound = true;
+
+    $$('#archive-filters .filter').forEach((btn) => {
+      btn.addEventListener('click', () => applyArchiveFilter(btn.dataset.filter));
+    });
+
+    const input = $('#archive-search');
+    const clear = $('#archive-clear');
+    if (input) {
+      input.addEventListener('input', () => {
+        state.query = input.value;
+        state.filter = 'all';
+        state.results = searchArchive(input.value);
+        if (clear) clear.hidden = !input.value.length;
+        renderArchiveView();
+      });
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') resetArchiveSearch();
+      });
+    }
+    if (clear) {
+      clear.addEventListener('click', () => {
+        resetArchiveSearch();
+        if (input) input.focus();
+      });
+    }
+  }
+
+  function resetArchiveSearch() {
+    state.query = '';
+    state.results = [];
+    const input = $('#archive-search');
+    if (input) input.value = '';
+    const clear = $('#archive-clear');
+    if (clear) clear.hidden = true;
+    renderArchiveView();
+  }
+
+  function searchArchive(value) {
+    const query = String(value || '').trim().normalize('NFKC').toLowerCase();
+    if (!query) return [];
+    const words = query.split(/\s+/).filter(Boolean);
+    const cols = (state.stats && state.stats.cols) || [];
+    return cols.filter((c) => {
+      const s = c.subject || {};
+      const hay = [s.name, s.name_cn, s.date, s.platform, (s.tags || []).join(' ')]
+        .join(' ').normalize('NFKC').toLowerCase();
+      return words.every((w) => hay.includes(w));
+    }).sort((a, b) => {
+      const ra = relevance(a, query);
+      const rb = relevance(b, query);
+      return (rb - ra) || ((b.rate || 0) - (a.rate || 0)) || ((b.subject.score || 0) - (a.subject.score || 0));
+    });
+  }
+
+  function relevance(c, query) {
+    const s = c.subject || {};
+    const cn = String(s.name_cn || '').normalize('NFKC').toLowerCase();
+    const jp = String(s.name || '').normalize('NFKC').toLowerCase();
+    let n = 0;
+    if (cn === query || jp === query) n += 100;
+    if (cn.startsWith(query) || jp.startsWith(query)) n += 40;
+    if (cn.includes(query) || jp.includes(query)) n += 15;
+    if ((s.tags || []).some((t) => String(t).normalize('NFKC').toLowerCase().includes(query))) n += 8;
+    if (String(s.date || '').startsWith(query)) n += 12;
+    return n;
+  }
+
+  function renderArchiveView() {
+    const grid = $('#archive-grid');
+    if (!grid) return;
+    const activeQuery = String(state.query || '').trim();
+    const base = activeQuery ? state.results : state.archiveItems;
+
+    const counts = { all: base.length, 2: 0, 1: 0, 4: 0 };
+    base.forEach((c) => { counts[c.subject_type] = (counts[c.subject_type] || 0) + 1; });
+
+    $$('#archive-filters .filter').forEach((btn) => {
+      const f = btn.dataset.filter;
+      const span = $('span', btn);
+      if (span) span.textContent = counts[f] || 0;
+      const on = state.filter === f;
+      btn.classList.toggle('is-on', on);
+      btn.setAttribute('aria-pressed', String(on));
+    });
+
+    const filtered = state.filter === 'all' ? base : base.filter((c) => String(c.subject_type) === String(state.filter));
+    const shown = filtered.slice(0, 48);
+    grid.innerHTML = shown.map(archItemHTML).join('');
+    grid.classList.toggle('is-empty', shown.length === 0);
+
+    const empty = $('#archive-empty');
+    if (empty) {
+      empty.hidden = shown.length > 0;
+      if (!shown.length) {
+        const scope = state.filter === 'all' ? '' : '在「' + (TYPES[state.filter] ? TYPES[state.filter].zh : '这个分类') + '」里';
+        empty.textContent = activeQuery
+          ? scope + '没有找到「' + state.query.trim() + '」。试试标题、年份或标签。'
+          : '这个分类暂时没有条目。';
+      }
+    }
+
+    const count = $('#archive-count');
+    if (count) {
+      const label = activeQuery ? 'MATCH' : 'SHOWN';
+      const total = activeQuery ? (state.filter === 'all' ? base.length : filtered.length) : state.total;
+      count.textContent = shown.length + ' / ' + fmtInt(total) + ' ' + label;
+    }
+  }
+
   function applyArchiveFilter(filter) {
     state.filter = filter;
-    $$('#archive-filters .filter').forEach((b) => {
-      const on = b.dataset.filter === filter;
-      b.classList.toggle('is-on', on);
-      b.setAttribute('aria-pressed', String(on));
-    });
-    let shown = 0;
-    $$('#archive-grid .arch-item').forEach((el) => {
-      const ok = filter === 'all' || String(el.dataset.type) === String(filter);
-      el.classList.toggle('is-hidden', !ok);
-      if (ok) shown += 1;
-    });
-    if ($('#archive-count')) $('#archive-count').textContent = shown + ' / ' + fmtInt(state.total) + ' SHOWN';
+    renderArchiveView();
   }
 
   function renderWords(stats) {

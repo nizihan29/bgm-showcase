@@ -325,6 +325,13 @@
     </header>
 
     <div class="archive-bar reveal">
+      <div class="archive-search" role="search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.2"></circle><path d="M15.2 15.2 21 21"></path></svg>
+        <label class="sr-only" for="archive-search">在收藏里搜索</label>
+        <input id="archive-search" type="search" placeholder="搜标题 / 年份 / 标签" autocomplete="off" spellcheck="false" aria-controls="archive-grid">
+        <button type="button" class="search-clear" id="archive-clear" aria-label="清空搜索" hidden>×</button>
+      </div>
+
       <div class="filters" id="archive-filters" role="group" aria-label="按类型筛选收藏">
         <button type="button" class="filter is-on" data-filter="all" aria-pressed="true">ALL <span>48</span></button>
         <button type="button" class="filter" data-filter="2" aria-pressed="false">ANIME <span>—</span></button>
@@ -335,6 +342,7 @@
     </div>
 
     <div class="archive-grid" id="archive-grid"></div>
+    <p class="archive-empty" id="archive-empty" role="status" hidden></p>
 
     <a class="archive-more reveal" href="https://bgm.tv/user/m1n/collections" target="_blank" rel="noopener noreferrer">
       <span>全部 1327 部收藏</span><b aria-hidden="true">↗</b>
