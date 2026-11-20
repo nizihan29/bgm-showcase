@@ -234,6 +234,16 @@
     if ($('#profile-avatar') && p.avatar) $('#profile-avatar').src = p.avatar;
     if ($('#profile-intro')) $('#profile-intro').textContent = CONTENT.intro || p.sign || '';
     if ($('#profile-quote')) $('#profile-quote').textContent = CONTENT.quote || p.sign || '';
+    if ($('#profile-now')) {
+      const bits = [
+        ['在看', stats.byStatus[3] || 0],
+        ['想看', stats.byStatus[1] || 0],
+        ['搁置', stats.byStatus[4] || 0],
+      ];
+      $('#profile-now').innerHTML = bits.map(([label, n], i) =>
+        '<span>' + label + ' <b>' + fmtInt(n) + '</b> 部</span>' + (i < bits.length - 1 ? '<i>·</i>' : '')
+      ).join('');
+    }
 
     const tagBox = $('#profile-tags');
     if (tagBox) {

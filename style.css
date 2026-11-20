@@ -1067,6 +1067,28 @@ ul { margin: 0; padding: 0; list-style: none; }
   line-height: 2;
   color: var(--ink-soft);
 }
+.profile-now {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  margin: 0 0 16px;
+  font-family: var(--font-en);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  color: var(--muted);
+}
+.profile-now b {
+  font-size: 12px;
+  font-weight: 900;
+  color: var(--red);
+  letter-spacing: 0;
+}
+.profile-now i {
+  font-style: normal;
+  color: var(--line);
+}
+
 .profile-quote {
   margin: 0 0 20px;
   padding: 2px 0 2px 14px;
@@ -2702,6 +2724,17 @@ a.year-col { cursor: pointer; }
 }
 .footer-meta b { color: var(--paper); font-size: 9px; }
 .footer-meta a { color: var(--paper); text-decoration: none; border-bottom: 1px solid var(--red); }
+.footer-manifesto {
+  position: relative;
+  z-index: 2;
+  max-width: var(--wrap);
+  margin: 26px auto 0;
+  font-size: 11px;
+  line-height: 1.9;
+  letter-spacing: .04em;
+  color: rgba(251, 248, 241, .78);
+}
+
 .footer-bottom {
   position: relative;
   z-index: 2;
