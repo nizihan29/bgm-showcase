@@ -89,6 +89,7 @@
     }
     initReveal();
     initSpy();
+    initSearchFromUrl();
     initDeepLink();
   }
 
@@ -798,6 +799,7 @@
         state.archiveLimit = 48;
         state.results = searchArchive(input.value);
         if (clear) clear.hidden = !input.value.length;
+        syncSearchUrl(state.query);
         renderArchiveView();
       });
       input.addEventListener('keydown', (e) => {
@@ -828,6 +830,7 @@
     if (input) input.value = '';
     const clear = $('#archive-clear');
     if (clear) clear.hidden = true;
+    syncSearchUrl('');
     renderArchiveView();
   }
 
@@ -915,6 +918,32 @@
     state.filter = filter;
     state.archiveLimit = 48;
     renderArchiveView();
+  }
+
+  function syncSearchUrl(query) {
+    const url = new URL(location.href);
+    if (query) url.searchParams.set('q', query);
+    else url.searchParams.delete('q');
+    history.replaceState(history.state, '', url);
+  }
+
+  function initSearchFromUrl() {
+    const query = new URLSearchParams(location.search).get('q');
+    if (!query) return;
+    const input = $('#archive-search');
+    if (!input) return;
+    state.query = query;
+    state.filter = 'all';
+    state.archiveLimit = 48;
+    state.results = searchArchive(query);
+    input.value = query;
+    const clear = $('#archive-clear');
+    if (clear) clear.hidden = false;
+    renderArchiveView();
+    if (!location.hash || location.hash === '#archive') {
+      const target = $('#archive');
+      if (target) setTimeout(() => target.scrollIntoView({ behavior: 'auto', block: 'start' }), 60);
+    }
   }
 
   function initDeepLink() {
@@ -1077,6 +1106,7 @@
     input.value = query;
     const clear = $('#archive-clear');
     if (clear) clear.hidden = false;
+    syncSearchUrl(query);
     renderArchiveView();
 
     const target = $('#archive');
