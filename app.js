@@ -170,6 +170,7 @@
     renderWishlist(data, stats);
     renderRecords(stats);
     renderTasteMap(stats);
+    initStatsLinks();
     renderTop(stats);
     renderArchive(data, stats);
     renderWords(stats);
@@ -517,10 +518,15 @@
     if (yearBox) {
       const bars = stats.buckets.map((b, i) => {
         const pct = b.count ? Math.max(2, (b.count / stats.maxYear) * 100) : 0;
-        return '<div class="year-col' + (b.count === stats.maxYear ? ' is-peak' : '') + '" title="' + b.label + ' · ' + b.count + ' 部">' +
+        const clickable = b.year >= 2000 && b.count > 0;
+        const tag = clickable ? 'a' : 'div';
+        const attrs = clickable
+          ? ' href="#archive" data-year="' + b.year + '" aria-label="按 ' + b.year + ' 年筛选收藏，共 ' + b.count + ' 部" title="按 ' + b.year + ' 年筛选收藏 · ' + b.count + ' 部"'
+          : ' title="' + b.label + ' · ' + b.count + ' 部"';
+        return '<' + tag + ' class="year-col' + (b.count === stats.maxYear ? ' is-peak' : '') + '"' + attrs + '>' +
           '<span class="ycount">' + b.count + '</span>' +
           '<div class="ybar" data-h="' + pct.toFixed(2) + '" style="height:0"></div>' +
-        '</div>';
+        '</' + tag + '>';
       }).join('');
       const labels = ['≤1999', '2005', '2010', '2015', '2020', '2026'];
       yearBox.innerHTML = '<div class="year-bars">' + bars + '</div>' +
@@ -533,9 +539,9 @@
       const span = Math.max(1, stats.tagPeak - min);
       cloud.innerHTML = stats.tags.map((t, i) => {
         const size = 11 + ((t.count - min) / span) * 18;
-        return '<span class="cloud-tag' + (i < 3 ? ' is-top' : '') + '" style="font-size:' + size.toFixed(1) + 'px" title="' + esc(t.name) + ' · ' + t.count + ' 部">' +
+        return '<a class="cloud-tag' + (i < 3 ? ' is-top' : '') + '" href="#archive" data-tag="' + esc(t.name) + '" style="font-size:' + size.toFixed(1) + 'px" title="按「' + esc(t.name) + '」筛选收藏 · ' + t.count + ' 部">' +
           esc(t.name) + '<sup>' + t.count + '</sup>' +
-        '</span>';
+        '</a>';
       }).join('');
     }
 
@@ -908,6 +914,47 @@
     if (restore && state.detailLast && state.detailLast.focus) {
       state.detailLast.focus({ preventScroll: true });
     }
+  }
+
+  function initStatsLinks() {
+    const years = $('#year-chart');
+    if (years && !years.dataset.bound) {
+      years.dataset.bound = '1';
+      years.addEventListener('click', (e) => {
+        const link = e.target.closest('[data-year]');
+        if (!link) return;
+        e.preventDefault();
+        goToArchive(link.dataset.year);
+      });
+    }
+
+    const tags = $('#tag-cloud');
+    if (tags && !tags.dataset.bound) {
+      tags.dataset.bound = '1';
+      tags.addEventListener('click', (e) => {
+        const link = e.target.closest('[data-tag]');
+        if (!link) return;
+        e.preventDefault();
+        goToArchive(link.dataset.tag);
+      });
+    }
+  }
+
+  function goToArchive(query) {
+    const input = $('#archive-search');
+    if (!input) return;
+    state.query = query;
+    state.filter = 'all';
+    state.results = searchArchive(query);
+    input.value = query;
+    const clear = $('#archive-clear');
+    if (clear) clear.hidden = false;
+    renderArchiveView();
+
+    const target = $('#archive');
+    const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (target) target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+    setTimeout(() => input.focus({ preventScroll: true }), reduce ? 0 : 700);
   }
 
   function renderWords(stats) {

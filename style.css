@@ -2025,6 +2025,9 @@ ul { margin: 0; padding: 0; list-style: none; }
 }
 .year-col {
   flex: 1;
+  color: inherit;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -2039,6 +2042,7 @@ ul { margin: 0; padding: 0; list-style: none; }
   transition: height .9s cubic-bezier(.2, 1, .3, 1), background .2s;
 }
 .year-col.is-peak .ybar { background: var(--red); }
+a.year-col { cursor: pointer; }
 .year-col:hover .ybar { background: var(--red); }
 .year-col .ycount {
   position: absolute;
