@@ -65,7 +65,7 @@ window.SITE_CONTENT = {
 ## 设计说明
 
 - **配色**：纸白 `#fbf8f1`、朱红 `#c7000a / #7d0000`、墨黑 `#1c1a17`，青色/粉色/黄色只做点缀。
-- **字体**：Inter（英文标题）、Noto Sans SC（中文）、Mochiy Pop One（日文小标签），来自 Google Fonts；被墙或离线时会回退到系统字体。
+- **字体**：本地 subset 的 Inter（英文/数字）、Mochiy Pop One（静态日文小标签）、Noto Sans SC 900（首屏名字），总共约 44 KB；动态中文/日文回退系统字体。主页面不再依赖 Google Fonts（404 页仍保留 CDN 回退），字体授权文件在 `assets/fonts/`。
 - **菜单**：右上角印章按钮，环形 MENU 文字 + 三横；打开后全屏红底白点，菜单项逐条弹入，支持 Esc、焦点循环和滚动锁（用 `position: fixed` 保存/恢复位置，iOS 上也不会滚穿背景）。
 - **卡片**：白底、粗描边、硬阴影、轻微旋转和胶带；数据区保持白卡，先保证可读，再谈风格。
 - **动效**：滚动 reveal、跑马灯、柱状图生长、封面悬停；全部尊重 `prefers-reduced-motion`。
@@ -105,6 +105,7 @@ https://<你的用户名>.github.io/bgm-showcase/
 ## 技术说明
 
 - 纯静态：`index.html` + `style.css` + `app.js` + `content.js` + `data.json`
+- 本地字体 subset 约 44 KB，替代原先 Google Fonts 的 50+ 个请求 / 约 1.9 MB
 - 带 `site.webmanifest`、192/512 主屏图标和 `apple-touch-icon`；可以“添加到主屏幕”，但没有做离线缓存
 - 零依赖、零构建；`scripts/fetch_bgm.py` 只用 Python 标准库
 - 图片直接引用 `lain.bgm.tv` 的公开封面，`loading="lazy"`；加载失败会自动替换成占位图

@@ -255,7 +255,7 @@
 
     stack.innerHTML = picks.slice(0, 5).map((s, i) => (
       '<div class="stack-card">' +
-        '<img src="' + esc((s.images && s.images.common) || '') + '" alt="" loading="' + (i < 2 ? 'eager' : 'lazy') + '" decoding="async" referrerpolicy="no-referrer">' +
+        '<img src="' + esc((s.images && s.images.common) || '') + '" alt="" loading="' + (i < 2 ? 'eager' : 'lazy') + '" decoding="async"' + (i === 0 ? ' fetchpriority="high"' : '') + ' referrerpolicy="no-referrer">' +
         '<span class="stack-title">' + esc(titleOf(s)) + '</span>' +
       '</div>'
     )).join('');

@@ -6,6 +6,28 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 
+@font-face {
+  font-family: "KOKO Inter";
+  src: url("assets/fonts/inter-subset.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "KOKO Pop";
+  src: url("assets/fonts/mochiy-subset.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "KOKO Display";
+  src: url("assets/fonts/noto-display.woff2") format("woff2");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --paper: #fbf8f1;
   --paper-2: #f2ebdd;
@@ -28,9 +50,11 @@
   --pad: clamp(20px, 5vw, 64px);
   --r: 4px;
 
-  --font-sans: "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-  --font-en: "Inter", "Helvetica Neue", Arial, sans-serif;
-  --font-jp: "Mochiy Pop One", "Hiragino Sans", "Yu Gothic", sans-serif;
+  --font-sans: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  --font-en: "KOKO Inter", "Helvetica Neue", Arial, sans-serif;
+  --font-jp: "KOKO Pop", "Hiragino Sans", "Yu Gothic", sans-serif;
+  --font-jp-text: "Hiragino Sans", "Yu Gothic", "Noto Sans JP", "PingFang SC", sans-serif;
+  --font-display: "KOKO Display", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
 
   --shadow: 8px 8px 0 var(--ink);
   --shadow-sm: 4px 4px 0 var(--ink);
@@ -573,11 +597,11 @@ ul { margin: 0; padding: 0; list-style: none; }
 .hero-title-wrap { position: relative; margin: 18px 0 24px; }
 
 .hero-title {
+  font-family: var(--font-display);
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  font-family: var(--font-sans);
   font-weight: 900;
   font-size: clamp(4.4rem, 9.2vw, 8.6rem);
   line-height: 1;
@@ -1351,7 +1375,7 @@ ul { margin: 0; padding: 0; list-style: none; }
   text-shadow: 3px 3px 0 var(--red-deep);
 }
 .feature-jp {
-  font-family: var(--font-jp);
+  font-family: var(--font-jp-text);
   font-size: 10px;
   letter-spacing: .04em;
   color: #ffd9d1;
@@ -1524,7 +1548,7 @@ ul { margin: 0; padding: 0; list-style: none; }
 }
 .char-info { padding: 15px 3px 0; }
 .char-jp {
-  font-family: var(--font-jp);
+  font-family: var(--font-jp-text);
   font-size: 8px;
   color: var(--red);
   letter-spacing: .02em;
@@ -2953,7 +2977,7 @@ a.year-col { cursor: pointer; }
   letter-spacing: -.02em;
 }
 .detail-jp {
-  font-family: var(--font-jp);
+  font-family: var(--font-jp-text);
   font-size: 9px;
   color: var(--muted);
   line-height: 1.7;

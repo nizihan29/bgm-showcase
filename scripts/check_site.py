@@ -19,7 +19,9 @@ REQUIRED_FILES = [
     "index.html", "style.css", "app.js", "content.js", "data.json",
     "404.html", "robots.txt", ".nojekyll", "assets/preview.jpg",
     "site.webmanifest", "assets/icon-192.png", "assets/icon-512.png",
-    "assets/apple-touch-icon.png", "scripts/fetch_bgm.py",
+    "assets/apple-touch-icon.png", "assets/fonts/inter-subset.woff2",
+    "assets/fonts/mochiy-subset.woff2", "assets/fonts/noto-display.woff2",
+    "scripts/fetch_bgm.py",
 ]
 DATA_COLLECTION_KEYS = {
     "subject_id", "subject_type", "type", "rate", "ep_status", "updated_at", "subject",
