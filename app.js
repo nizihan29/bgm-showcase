@@ -164,6 +164,7 @@
     renderTicker(stats);
     renderFooter(data, stats);
     animateBars();
+    initHeroParallax();
   }
 
   function renderChrome(data) {
@@ -174,6 +175,13 @@
     if ($('#kicker') && CONTENT.kicker) $('#kicker').textContent = CONTENT.kicker;
     if ($('#hero-quote')) $('#hero-quote').textContent = CONTENT.quote || p.sign || '';
     if ($('#hero-quote-from')) $('#hero-quote-from').textContent = CONTENT.quoteFrom || 'BANGUMI SIGNATURE';
+
+    const social = $('.menu-social');
+    if (social && CONTENT.links && CONTENT.links.length) {
+      social.innerHTML = CONTENT.links.map((l) => (
+        '<a href="' + esc(l.href) + '" target="_blank" rel="noopener noreferrer">' + esc(l.label) + ' ↗</a>'
+      )).join('');
+    }
   }
 
   function renderHero(data, stats) {
@@ -359,6 +367,7 @@
         '<div class="char-pic">' +
           '<img src="' + esc(charImg(c)) + '" alt="' + esc(charName(c)) + '" loading="lazy" decoding="async" referrerpolicy="no-referrer">' +
           '<span class="char-name-onpic">' + esc(roman.toUpperCase()) + '</span>' +
+          '<a class="char-open" href="' + esc(bgmCharacter(c.id)) + '" target="_blank" rel="noopener noreferrer" aria-label="在 Bangumi 查看 ' + esc(charName(c)) + '">↗</a>' +
         '</div>' +
         '<div class="char-info">' +
           '<p class="char-jp">' + esc(c.name || '') + '</p>' +
@@ -719,6 +728,31 @@
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
+  }
+
+  function initHeroParallax() {
+    const art = $('.hero-art');
+    if (!art) return;
+    if (!window.matchMedia || !window.matchMedia('(pointer: fine)').matches) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const cards = $$('.stack-card', art);
+    let raf = 0;
+    art.addEventListener('pointermove', (e) => {
+      const r = art.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width - 0.5;
+      const y = (e.clientY - r.top) / r.height - 0.5;
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        cards.forEach((card, i) => {
+          const depth = (i % 3 + 1) * 3;
+          card.style.translate = (x * depth).toFixed(1) + 'px ' + (y * depth).toFixed(1) + 'px';
+        });
+      });
+    });
+    art.addEventListener('pointerleave', () => {
+      cancelAnimationFrame(raf);
+      cards.forEach((card) => { card.style.translate = ''; });
+    });
   }
 
   function initSpy() {
