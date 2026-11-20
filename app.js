@@ -254,7 +254,20 @@
       if (picks.length < 5 && !picks.some((p) => p.id === c.subject.id)) picks.push(c.subject);
     });
 
-    stack.innerHTML = picks.slice(0, 5).map((s, i) => (
+    const wanted = picks.slice(0, 5);
+    const existing = $$('.stack-card', stack).map((card) => {
+      const img = $('img', card);
+      return {
+        src: img ? img.getAttribute('src') : '',
+        title: $('.stack-title', card) ? $('.stack-title', card).textContent : '',
+      };
+    });
+    const unchanged = wanted.length === existing.length && wanted.every((s, i) =>
+      existing[i].src === ((s.images && s.images.common) || '') && existing[i].title === titleOf(s)
+    );
+    if (unchanged) return;
+
+    stack.innerHTML = wanted.map((s, i) => (
       '<div class="stack-card">' +
         '<img src="' + esc((s.images && s.images.common) || '') + '" alt="" loading="' + (i < 2 ? 'eager' : 'lazy') + '" decoding="async"' + (i === 0 ? ' fetchpriority="high"' : '') + ' referrerpolicy="no-referrer">' +
         '<span class="stack-title">' + esc(titleOf(s)) + '</span>' +
