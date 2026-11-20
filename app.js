@@ -48,13 +48,14 @@
   const bgmCharacter = (id) => 'https://bgm.tv/character/' + encodeURIComponent(id);
   const titleOf = (s) => (s && (s.name_cn || s.name)) || '未知作品';
 
-  const state = { data: null, stats: null, archiveItems: [], filter: 'all', total: 0, query: '', results: [], archiveBound: false };
+  const state = { data: null, stats: null, archiveItems: [], filter: 'all', total: 0, query: '', results: [], archiveBound: false, detailLast: null };
 
   /* ---------------- boot ---------------- */
   init();
 
   async function init() {
     bindChrome();
+    initDetail();
     initImageFallback();
     try {
       const res = await fetch('data.json', { cache: 'no-cache' });
@@ -668,7 +669,7 @@
   function archItemHTML(c) {
     const s = c.subject;
     const score = c.rate || (s.score ? s.score.toFixed(1) : '');
-    return '<a class="arch-item" data-type="' + c.subject_type + '" href="' + esc(bgmSubject(s.id)) + '" target="_blank" rel="noopener noreferrer" title="' + esc(titleOf(s)) + '">' +
+    return '<a class="arch-item" data-id="' + esc(s.id) + '" data-type="' + c.subject_type + '" href="' + esc(bgmSubject(s.id)) + '" target="_blank" rel="noopener noreferrer" title="查看《' + esc(titleOf(s)) + '》详情" aria-label="查看《' + esc(titleOf(s)) + '》详情">' +
       '<img src="' + esc((s.images && (s.images.small || s.images.common)) || PH) + '" alt="' + esc(titleOf(s)) + '" loading="lazy" decoding="async" referrerpolicy="no-referrer">' +
       (score ? '<span class="arch-score">' + esc(score) + '</span>' : '') +
       '<span class="arch-info"><span class="arch-title">' + esc(titleOf(s)) + '</span></span>' +
@@ -682,6 +683,19 @@
     $$('#archive-filters .filter').forEach((btn) => {
       btn.addEventListener('click', () => applyArchiveFilter(btn.dataset.filter));
     });
+
+    const grid = $('#archive-grid');
+    if (grid) {
+      grid.addEventListener('click', (e) => {
+        const card = e.target.closest('.arch-item');
+        if (!card) return;
+        if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+        const id = Number(card.dataset.id);
+        if (!id || !state.stats || !state.stats.cols.some((c) => c.subject_id === id)) return;
+        e.preventDefault();
+        openDetail(id, card);
+      });
+    }
 
     const input = $('#archive-search');
     const clear = $('#archive-clear');
@@ -790,6 +804,100 @@
   function applyArchiveFilter(filter) {
     state.filter = filter;
     renderArchiveView();
+  }
+
+  function initDetail() {
+    const detail = $('#detail');
+    if (!detail) return;
+    const close = $('#detail-close');
+
+    if (close) close.addEventListener('click', () => closeDetail());
+    detail.addEventListener('click', (e) => {
+      if (e.target.closest('[data-detail-close]')) closeDetail();
+    });
+
+    const link = $('#detail-link');
+    if (link) link.addEventListener('click', () => setTimeout(() => closeDetail(), 60));
+
+    document.addEventListener('keydown', (e) => {
+      if (!detail.classList.contains('is-open')) return;
+      if (e.key === 'Escape') { closeDetail(); return; }
+      if (e.key !== 'Tab') return;
+      const items = $$('a[href], button:not([disabled])', detail).filter((el) => el.offsetParent !== null);
+      if (!items.length) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    });
+  }
+
+  function openDetail(id, trigger) {
+    const detail = $('#detail');
+    if (!detail || !state.stats) return;
+    const c = state.stats.cols.find((x) => x.subject_id === id);
+    if (!c) return;
+    const s = c.subject || {};
+    const status = STATUS[c.type] || { zh: '记录', color: '#1c1a17' };
+    const statusColor = { 1: '#1c1a17', 2: '#c7000a', 3: '#0b8ea6', 4: '#ffd451', 5: '#b79cff' };
+
+    setText('#detail-kicker', (TYPES[c.subject_type] ? TYPES[c.subject_type].en : 'ARCHIVE') + ' / ' + ((s.date || '').slice(0, 4) || '—'));
+    setText('#detail-title', titleOf(s));
+    setText('#detail-jp', s.name || '');
+    setText('#detail-year', (s.date || '').slice(0, 4) || '—');
+    setText('#detail-rate', c.rate ? c.rate + ' / 10' : '未评分');
+    setText('#detail-score', (s.score ? Number(s.score).toFixed(1) : '—') + (s.rank ? ' · #' + s.rank : ''));
+    setText('#detail-progress', c.ep_status ? 'EP.' + String(c.ep_status).padStart(2, '0') + (s.eps ? ' / ' + s.eps : '') : status.zh);
+
+    const badge = $('#detail-status');
+    if (badge) {
+      badge.textContent = status.zh;
+      badge.style.background = statusColor[c.type] || status.color;
+      badge.style.color = (c.type === 4 || c.type === 5) ? '#1c1a17' : '#fbf8f1';
+    }
+
+    const tags = $('#detail-tags');
+    if (tags) {
+      tags.innerHTML = (s.tags || []).slice(0, 8).map((t) => '<li>' + esc(t) + '</li>').join('');
+      tags.hidden = !(s.tags && s.tags.length);
+    }
+
+    const note = $('#detail-note');
+    if (note) {
+      if (c.comment) {
+        note.textContent = '“' + c.comment + '”';
+      } else {
+        note.textContent = '标记于 ' + fmtDate(c.updated_at) + ' · ' + status.zh;
+      }
+    }
+
+    const cover = $('#detail-cover');
+    if (cover) {
+      cover.src = (s.images && (s.images.large || s.images.common)) || PH;
+      cover.alt = titleOf(s) + ' 封面';
+    }
+    const link = $('#detail-link');
+    if (link) link.href = bgmSubject(s.id);
+
+    state.detailLast = trigger || document.activeElement;
+    detail.classList.add('is-open');
+    detail.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('detail-open');
+    const card = $('.detail-card', detail);
+    if (card) card.scrollTop = 0;
+    const close = $('#detail-close');
+    if (close) setTimeout(() => close.focus({ preventScroll: true }), 60);
+  }
+
+  function closeDetail(restore = true) {
+    const detail = $('#detail');
+    if (!detail) return;
+    detail.classList.remove('is-open');
+    detail.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('detail-open');
+    if (restore && state.detailLast && state.detailLast.focus) {
+      state.detailLast.focus({ preventScroll: true });
+    }
   }
 
   function renderWords(stats) {
@@ -1076,6 +1184,11 @@
   function fmtDateShort(value) {
     const s = String(value || '').slice(0, 10);
     return s ? s.slice(5).replace('-', '.') : '—';
+  }
+
+  function fmtDate(value) {
+    const s = String(value || '').slice(0, 10);
+    return s ? s.replace(/-/g, '.') : '—';
   }
 
   function dateParts(value) {
