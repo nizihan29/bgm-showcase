@@ -6,6 +6,11 @@
 
 ![桌面预览](assets/preview.jpg)
 
+## 文档
+
+- [CHANGELOG.md](CHANGELOG.md) — 这一晚改了什么、已知边界
+- [TODO.md](TODO.md) — 明早可以一起补的个人内容与取舍
+
 ## 本地预览
 
 ```bash
