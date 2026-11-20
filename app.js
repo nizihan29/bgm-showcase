@@ -980,6 +980,7 @@
     detail.classList.add('is-open');
     detail.setAttribute('aria-hidden', 'false');
     document.body.classList.add('detail-open');
+    lockScroll();
     const card = $('.detail-card', detail);
     if (card) card.scrollTop = 0;
     const close = $('#detail-close');
@@ -992,6 +993,7 @@
     detail.classList.remove('is-open');
     detail.setAttribute('aria-hidden', 'true');
     document.body.classList.remove('detail-open');
+    unlockScroll();
     if (restore && state.detailLast && state.detailLast.focus) {
       state.detailLast.focus({ preventScroll: true });
     }
@@ -1084,6 +1086,38 @@
   }
 
   /* ---------------- chrome: menu, scroll, reveal ---------------- */
+  let scrollLockCount = 0;
+  let scrollLockY = 0;
+
+  function lockScroll() {
+    if (scrollLockCount === 0) {
+      scrollLockY = window.scrollY;
+      document.body.style.position = 'fixed';
+      document.body.style.top = '-' + scrollLockY + 'px';
+      document.body.style.left = '0';
+      document.body.style.right = '0';
+      document.body.style.width = '100%';
+      document.body.style.overflow = 'hidden';
+    }
+    scrollLockCount += 1;
+  }
+
+  function unlockScroll() {
+    scrollLockCount = Math.max(0, scrollLockCount - 1);
+    if (scrollLockCount > 0) return;
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.left = '';
+    document.body.style.right = '';
+    document.body.style.width = '';
+    document.body.style.overflow = '';
+    const root = document.documentElement;
+    const previousBehavior = root.style.scrollBehavior;
+    root.style.scrollBehavior = 'auto';
+    window.scrollTo(0, scrollLockY);
+    root.style.scrollBehavior = previousBehavior;
+  }
+
   function bindChrome() {
     const menu = $('#menu');
     const button = $('#menu-button');
@@ -1092,6 +1126,7 @@
     const openMenu = () => {
       lastFocus = document.activeElement;
       document.body.classList.add('menu-open');
+      lockScroll();
       menu.classList.add('is-open');
       menu.setAttribute('aria-hidden', 'false');
       button.setAttribute('aria-expanded', 'true');
@@ -1102,6 +1137,7 @@
     };
     const closeMenu = (restore = true) => {
       document.body.classList.remove('menu-open');
+      unlockScroll();
       menu.classList.remove('is-open');
       menu.setAttribute('aria-hidden', 'true');
       button.setAttribute('aria-expanded', 'false');

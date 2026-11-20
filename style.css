@@ -395,6 +395,7 @@ ul { margin: 0; padding: 0; list-style: none; }
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+  overscroll-behavior: contain;
 }
 .menu-head {
   display: flex;
@@ -2870,6 +2871,7 @@ a.year-col { cursor: pointer; }
   width: min(920px, 100%);
   max-height: min(88vh, 780px);
   overflow: auto;
+  overscroll-behavior: contain;
   background: var(--paper);
   border: 2px solid var(--ink);
   box-shadow: 12px 12px 0 rgba(0, 0, 0, .35);
