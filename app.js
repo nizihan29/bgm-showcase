@@ -896,6 +896,7 @@
 
     const head = $('.site-head');
     const progress = $('#progress');
+    const toTop = $('#to-top');
     let lastY = window.scrollY;
     const onScroll = () => {
       const y = window.scrollY;
@@ -914,6 +915,7 @@
         const max = document.documentElement.scrollHeight - window.innerHeight;
         progress.style.width = (max > 0 ? clamp((y / max) * 100, 0, 100) : 0) + '%';
       }
+      if (toTop) toTop.classList.toggle('is-visible', y > 700);
       lastY = y;
     };
     window.addEventListener('scroll', onScroll, { passive: true });
