@@ -27,6 +27,26 @@
     '短片', 'CM', 'PV', '同人', '游戏改', '真人', '日剧', '电影',
     '单行本', '漫画系列', '轻小说分卷', '轻改', '小说改',
   ]);
+  const STUDIO_ALIASES = {
+    MADHouse: 'MADHOUSE', MAPPA: 'MAPPA', BONES: 'BONES', TRIGGER: 'TRIGGER',
+    SHAFT: 'SHAFT', ufotable: 'ufotable', Passione: 'Passione',
+    'J.C.STAFF': 'J.C.STAFF', 'A-1 Pictures': 'A-1 Pictures',
+    '京阿尼': '京都动画', '京都アニメーション': '京都动画',
+    SUNRISE: 'SUNRISE', 'サンライズ': 'SUNRISE',
+    '東映アニメーション': '东映动画', 'スタジオジブリ': '吉卜力',
+    GONZO: 'GONZO', AIC: 'AIC', CloverWorks: 'CloverWorks',
+    'P.A.WORKS': 'P.A.WORKS', LIDENFILMS: 'LIDENFILMS',
+    'ライデンフィルム': 'LIDENFILMS', Lerche: 'Lerche',
+    'Diomedéa': 'Diomedéa', NOMAD: 'NOMAD', C2C: 'C2C', ZEXCS: 'ZEXCS',
+    NUT: 'NUT', '8bit': '8bit', 'シンエイ動画': 'SHIN-EI',
+    'Production I.G': 'Production I.G', 'WIT STUDIO': 'WIT STUDIO',
+    '動画工房': '动画工房', 'Doga Kobo': '动画工房',
+    'Project No.9': 'Project No.9', 'SILVER LINK.': 'SILVER LINK.',
+    'WHITE FOX': 'WHITE FOX', 'PINE JAM': 'PINE JAM', ENGI: 'ENGI',
+    'Okuruto Noboru': 'Okuruto Noboru', SATELIGHT: 'SATELIGHT',
+    'サテライト': 'SATELIGHT', '童夢': '童夢', ARMS: 'ARMS',
+  };
+
   const PH = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(
     '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="600" viewBox="0 0 400 600">' +
     '<rect width="400" height="600" fill="#e9dfcc"/>' +
@@ -118,6 +138,22 @@
       .sort((a, b) => b.count - a.count)
       .slice(0, 24);
 
+    // studio tags (heuristic: subject tags, deduped per subject)
+    const studioMap = new Map();
+    cols.forEach((c) => {
+      const seen = new Set();
+      (c.subject.tags || []).forEach((t) => {
+        const name = STUDIO_ALIASES[t];
+        if (name && !seen.has(name)) {
+          seen.add(name);
+          studioMap.set(name, (studioMap.get(name) || 0) + 1);
+        }
+      });
+    });
+    const studios = Array.from(studioMap, ([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 8);
+
     // score disagreements
     const diffs = rated
       .filter((c) => c.subject.score > 0)
@@ -150,7 +186,7 @@
 
     return {
       cols, byType, byStatus, dist, rated, avg, top, buckets, tags,
-      deviations, watching, wish, avgDiff, comments, completed,
+      deviations, watching, wish, avgDiff, studios, comments, completed,
       total: cols.length,
       tagPeak: tags[0] ? tags[0].count : 1,
       maxDist: Math.max(1, ...Object.values(dist)),
@@ -169,6 +205,7 @@
     renderWatching(stats);
     renderWishlist(data, stats);
     renderRecords(stats);
+    renderStudios(stats);
     renderTasteMap(stats);
     initStatsLinks();
     renderTop(stats);
@@ -569,6 +606,21 @@
         '</a>';
       }).join('') || '<p class="panel-note">样本还不够形成分歧。</p>';
     }
+  }
+
+  function renderStudios(stats) {
+    const box = $('#studio-grid');
+    if (!box || !stats.studios.length) return;
+    const max = stats.studios[0].count || 1;
+    box.innerHTML = stats.studios.map((s, i) => {
+      const pct = Math.max(8, Math.round((s.count / max) * 100));
+      return '<div class="studio-item' + (i === 0 ? ' is-top' : '') + '">' +
+        '<span class="studio-rank">' + String(i + 1).padStart(2, '0') + '</span>' +
+        '<span class="studio-name" title="' + esc(s.name) + '">' + esc(s.name) + '</span>' +
+        '<span class="studio-count">' + s.count + '<small>部</small></span>' +
+        '<span class="studio-bar"><i style="width:' + pct + '%"></i></span>' +
+      '</div>';
+    }).join('');
   }
 
   function renderTasteMap(stats) {
