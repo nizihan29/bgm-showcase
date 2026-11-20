@@ -75,6 +75,14 @@ window.SITE_CONTENT = {
 
 参考的是动画官网的**语法**（版式、字重、红白关系、印章菜单、纸屑），没有使用官网的 logo、插画或视频素材。
 
+## 质量检查
+
+```bash
+python3 scripts/check_site.py
+```
+
+会检查 `data.json` 的字段/数量/重复项、HTML 的重复 id、锚点目标、本地资源、图片 alt、viewport 等；CI 里还有一条 `.github/workflows/check.yml` 跑同样的检查和语法检查。
+
 ## 部署到 GitHub Pages
 
 ```bash
@@ -91,14 +99,14 @@ git push -u origin main
 https://<你的用户名>.github.io/bgm-showcase/
 ```
 
-`data.json`、`content.js`、`scripts/` 都会一起发布；没有构建步骤。
+`data.json`、`content.js`、`scripts/` 都会一起发布；没有构建步骤。仓库里带了 `.nojekyll`、`robots.txt` 和一个同风格的 `404.html`，GitHub Pages 找不到路径时会回到这张“迷路的档案”。
 
 ## 技术说明
 
 - 纯静态：`index.html` + `style.css` + `app.js` + `content.js` + `data.json`
 - 零依赖、零构建；`scripts/fetch_bgm.py` 只用 Python 标准库
 - 图片直接引用 `lain.bgm.tv` 的公开封面，`loading="lazy"`；加载失败会自动替换成占位图
-- `data.json` 约 900 KB（未压缩）；页面首屏只加载 hero / profile 所需图片
+- `data.json` 约 890 KB（未压缩）；页面首屏只加载 hero / profile 所需图片
 - 兼容现代浏览器；不支持 `IntersectionObserver` 时会直接显示全部内容
 
 ## 版权
