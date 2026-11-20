@@ -2690,10 +2690,6 @@ section[id] { scroll-margin-top: 92px; }
   .watch-row { grid-template-columns: 28px 56px minmax(0, 1fr) 92px; }
   .watch-progress { display: none; }
   .watch-cover { width: 56px; }
-  .wish-layout { grid-template-columns: 1fr; }
-  .wish-lead { min-height: 0; }
-  .wish-shelf { padding-top: 0; }
-  .wish-arrows { display: none; }
   .archive-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
   .footer-inner { grid-template-columns: 1fr 1fr; }
   .footer-brand { grid-column: span 2; }
@@ -2813,8 +2809,11 @@ section[id] { scroll-margin-top: 92px; }
   .diff-list { grid-template-columns: 1fr; }
   .donut { width: 140px; height: 140px; }
 
-  .wish-lead { padding: 20px; }
+  .wish-layout { grid-template-columns: 1fr; }
+  .wish-lead { min-height: 0; padding: 20px; }
   .wish-lead strong { font-size: 3.6rem; }
+  .wish-shelf { padding-top: 0; }
+  .wish-arrows { display: none; }
   .wish-note { margin-top: 18px; }
   .wish-grid { gap: 12px; padding-right: 0; }
   .wish-card { flex-basis: 42vw; max-width: 168px; }
