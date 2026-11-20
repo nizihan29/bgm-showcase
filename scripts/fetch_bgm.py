@@ -62,7 +62,6 @@ def slim_subject(s: dict) -> dict:
         "eps": s.get("eps") or 0,
         "volumes": s.get("volumes") or 0,
         "platform": s.get("platform") or "",
-        "collection_total": s.get("collection_total") or 0,
         "images": {
             "common": images.get("common") or images.get("medium") or "",
             "small": images.get("small") or images.get("grid") or "",
@@ -154,6 +153,23 @@ def main() -> None:
         },
         "collections": collections,
     }
+
+    # Keep the previous timestamp when the actual data is unchanged, so a
+    # scheduled refresh does not create an empty commit every week.
+    if os.path.exists(OUT):
+        try:
+            with open(OUT, encoding="utf-8") as fh:
+                previous = json.load(fh)
+            current_cmp = json.loads(json.dumps(payload))
+            current_cmp["meta"].pop("fetched_at", None)
+            previous_cmp = json.loads(json.dumps(previous))
+            previous_cmp.get("meta", {}).pop("fetched_at", None)
+            if current_cmp == previous_cmp:
+                payload["meta"]["fetched_at"] = previous.get("meta", {}).get(
+                    "fetched_at", payload["meta"]["fetched_at"]
+                )
+        except (ValueError, KeyError, OSError):
+            pass
 
     with open(OUT, "w", encoding="utf-8") as fh:
         json.dump(payload, fh, ensure_ascii=False, separators=(",", ":"))

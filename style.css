@@ -1683,6 +1683,39 @@ ul { margin: 0; padding: 0; list-style: none; }
   line-height: 1.9;
   color: #ffe9e2;
 }
+.wish-random {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  margin-top: 14px;
+  padding: 9px 11px;
+  background: var(--paper);
+  color: var(--ink);
+  border: 2px solid var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
+  font-family: var(--font-sans);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: .04em;
+  text-align: left;
+  cursor: pointer;
+  transition: transform .2s, box-shadow .2s, background .2s, color .2s;
+}
+.wish-random b {
+  font-family: var(--font-en);
+  font-size: 8px;
+  letter-spacing: .04em;
+  color: var(--red);
+  white-space: nowrap;
+  transition: color .2s;
+}
+.wish-random:hover { background: var(--ink); color: var(--paper); transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ink); }
+.wish-random:hover b { color: var(--yellow); }
+
 .wish-link {
   position: relative;
   z-index: 2;

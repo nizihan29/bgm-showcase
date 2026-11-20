@@ -453,6 +453,16 @@
         grid.scrollBy({ left: Number(btn.dataset.dir) * step, behavior: reduce ? 'auto' : 'smooth' });
       });
     });
+
+    const random = $('#wish-random');
+    if (random) {
+      random.setAttribute('aria-label', '从 ' + stats.wish.length + ' 部想看里随机抽一部');
+      random.addEventListener('click', () => {
+        if (!stats.wish.length) return;
+        const pick = stats.wish[Math.floor(Math.random() * stats.wish.length)];
+        openDetail(pick.subject_id, random);
+      });
+    }
   }
 
   function renderRecords(stats) {

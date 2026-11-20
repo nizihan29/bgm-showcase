@@ -25,7 +25,7 @@ python3 -m http.server 8000
 | FEATURED | 最近沉迷：《学生会也有洞！》专属大卡 | `featured` + 对应收藏 |
 | FAVORITES | 5 位最爱角色：生日、身高、血型、私货短句 | `characters` + `content.js` |
 | WATCHING | 最近在看的进度、话数、更新时间 | `collections?type=3` |
-| WISHLIST | 472 部想看里的最近 8 部，横向书架 | `collections?type=1` |
+| WISHLIST | 472 部想看里的最近 8 部，横向书架 + 随机抽一部 | `collections?type=1` |
 | RECORDS | 总览数字、评分分布、收藏状态、年份分布、口味关键词、口味散点图 + 评分分歧 | 全量收藏计算 |
 | TOP RATED | 动画 / 书籍 / 游戏各自的前 5 名 | 我的评分排序 |
 | ARCHIVE | 48 张精选封面 + 全量 1,327 部实时搜索；点封面打开作品详情 | 评分最高 + 最近更新 |
@@ -43,7 +43,7 @@ python3 scripts/fetch_bgm.py
 - 换最爱角色：同时改 `scripts/fetch_bgm.py` 里的 `CHARACTER_IDS` 和 `content.js` 里的 `favoriteOrder`
 - 换 featured 作品：改 `scripts/fetch_bgm.py` 里的 `FEATURED_SUBJECT`，再改 `index.html` 里 `#feature-link` 的默认链接即可
 
-`data.json` 是提交进仓库的快照，所以页面不依赖实时 API；想每天自动更新，可以加一条 GitHub Actions 定时跑上面的脚本。
+`data.json` 是提交进仓库的快照，所以页面不依赖实时 API。仓库里带了一条 GitHub Actions 定时任务（`.github/workflows/refresh-data.yml`），每周一自动跑脚本，数据有变化才提交；不需要的话删掉这个文件即可。
 
 ## 改“我”的部分
 
@@ -71,7 +71,7 @@ window.SITE_CONTENT = {
 - **动效**：滚动 reveal、跑马灯、柱状图生长、封面悬停；全部尊重 `prefers-reduced-motion`。
 - **响应式**：1440 / 1024 / 768 / 390 四档验证；平板的 5 张角色卡会重排成居中的 3+2。
 - **搜索**：收藏墙支持标题（中/日）、年份、标签的即时过滤；搜索时自动回到 ALL，避免被当前类型筛选挡住。
-- **详情弹窗**：点收藏墙/搜索结果里的封面，会在页内打开作品详情（我的评分、状态、进度、标签、短评），`Ctrl/⌘` 点击仍直接去 Bangumi。
+- **详情弹窗**：点收藏墙/搜索结果里的封面，会在页内打开作品详情（我的评分、状态、进度、标签、短评），`Ctrl/⌘` 点击仍直接去 Bangumi；WISHLIST 的“随机抽一部”也会用同一个弹窗。
 
 参考的是动画官网的**语法**（版式、字重、红白关系、印章菜单、纸屑），没有使用官网的 logo、插画或视频素材。
 
