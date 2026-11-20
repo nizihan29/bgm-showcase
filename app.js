@@ -48,7 +48,7 @@
   const bgmCharacter = (id) => 'https://bgm.tv/character/' + encodeURIComponent(id);
   const titleOf = (s) => (s && (s.name_cn || s.name)) || '未知作品';
 
-  const state = { data: null, stats: null, archiveItems: [], filter: 'all', total: 0, query: '', results: [], archiveBound: false, detailLast: null };
+  const state = { data: null, stats: null, archiveItems: [], filter: 'all', total: 0, query: '', results: [], archiveLimit: 48, archiveBound: false, detailLast: null };
 
   /* ---------------- boot ---------------- */
   init();
@@ -719,6 +719,7 @@
       input.addEventListener('input', () => {
         state.query = input.value;
         state.filter = 'all';
+        state.archiveLimit = 48;
         state.results = searchArchive(input.value);
         if (clear) clear.hidden = !input.value.length;
         renderArchiveView();
@@ -733,11 +734,20 @@
         if (input) input.focus();
       });
     }
+
+    const load = $('#archive-load');
+    if (load) {
+      load.addEventListener('click', () => {
+        state.archiveLimit += 48;
+        renderArchiveView();
+      });
+    }
   }
 
   function resetArchiveSearch() {
     state.query = '';
     state.results = [];
+    state.archiveLimit = 48;
     const input = $('#archive-search');
     if (input) input.value = '';
     const clear = $('#archive-clear');
@@ -794,9 +804,17 @@
     });
 
     const filtered = state.filter === 'all' ? base : base.filter((c) => String(c.subject_type) === String(state.filter));
-    const shown = filtered.slice(0, 48);
+    const shown = filtered.slice(0, state.archiveLimit);
     grid.innerHTML = shown.map(archItemHTML).join('');
     grid.classList.toggle('is-empty', shown.length === 0);
+
+    const load = $('#archive-load');
+    if (load) {
+      const remaining = filtered.length - shown.length;
+      load.hidden = remaining <= 0;
+      const cnt = $('#archive-load-count', load);
+      if (cnt) cnt.textContent = remaining > 0 ? '（还有 ' + fmtInt(remaining) + ' 部）' : '';
+    }
 
     const empty = $('#archive-empty');
     if (empty) {
@@ -819,6 +837,7 @@
 
   function applyArchiveFilter(filter) {
     state.filter = filter;
+    state.archiveLimit = 48;
     renderArchiveView();
   }
 
@@ -945,6 +964,7 @@
     if (!input) return;
     state.query = query;
     state.filter = 'all';
+    state.archiveLimit = 48;
     state.results = searchArchive(query);
     input.value = query;
     const clear = $('#archive-clear');
