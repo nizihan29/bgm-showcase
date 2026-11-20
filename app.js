@@ -333,7 +333,7 @@
         label: 'NOW OBSESSED',
         title: titleOf(featured),
         meta: fCol && fCol.ep_status ? '看到 EP.' + String(fCol.ep_status).padStart(2, '0') : seasonOf(featured.date) + ' 开播',
-        img: imgSrc(featured),
+        img: imgSrc(featured, 'small'),
         href: bgmSubject(featured.id),
         alt: titleOf(featured),
       });
@@ -353,7 +353,7 @@
         label: 'WATCHING / 在看',
         title: titleOf(watching.subject),
         meta: '更新 ' + fmtDateShort(watching.updated_at),
-        img: imgSrc(watching.subject),
+        img: imgSrc(watching.subject, 'small'),
         href: bgmSubject(watching.subject.id),
         alt: titleOf(watching.subject),
       });
@@ -363,7 +363,7 @@
         label: 'RECOMMEND / 想安利',
         title: titleOf(recommend.subject),
         meta: '我 ' + recommend.rate + ' / 均分 ' + (recommend.subject.score || '—'),
-        img: imgSrc(recommend.subject),
+        img: imgSrc(recommend.subject, 'small'),
         href: bgmSubject(recommend.subject.id),
         alt: titleOf(recommend.subject),
       });
@@ -473,7 +473,7 @@
       const tags = (s.tags || []).slice(0, 3).join(' / ');
       return '<a class="watch-row" href="' + esc(bgmSubject(s.id)) + '" target="_blank" rel="noopener noreferrer">' +
         '<span class="watch-no">' + String(i + 1).padStart(2, '0') + '</span>' +
-        '<img class="watch-cover" src="' + esc(imgSrc(s)) + '" alt="' + esc(titleOf(s)) + '" loading="lazy" decoding="async" referrerpolicy="no-referrer">' +
+        '<img class="watch-cover" src="' + esc(imgSrc(s, 'small')) + '" alt="' + esc(titleOf(s)) + '" loading="lazy" decoding="async" referrerpolicy="no-referrer">' +
         '<div class="watch-main">' +
           '<h3>' + esc(titleOf(s)) + '</h3>' +
           '<div class="watch-sub"><b>EP.' + String(ep).padStart(2, '0') + (eps ? ' / ' + eps : '') + '</b><span>' + esc(tags || '在看') + '</span></div>' +
@@ -611,7 +611,7 @@
       diff.innerHTML = stats.deviations.map(({ c, diff: d }) => {
         const s = c.subject;
         return '<a class="diff-row" href="' + esc(bgmSubject(s.id)) + '" target="_blank" rel="noopener noreferrer">' +
-          '<img src="' + esc(imgSrc(s)) + '" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer">' +
+          '<img src="' + esc(imgSrc(s, 'small')) + '" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer">' +
           '<span class="diff-main">' +
             '<span class="diff-title">' + esc(titleOf(s)) + '</span>' +
             '<span class="diff-scores"><b>我 ' + c.rate + '</b><span>均分 ' + (s.score || '—') + '</span></span>' +
@@ -702,7 +702,7 @@
         const s = c.subject;
         return '<a class="top-item" href="' + esc(bgmSubject(s.id)) + '" target="_blank" rel="noopener noreferrer">' +
           '<span class="top-rank">' + (i + 1) + '</span>' +
-          '<img class="top-cover" src="' + esc(imgSrc(s)) + '" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer">' +
+          '<img class="top-cover" src="' + esc(imgSrc(s, 'small')) + '" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer">' +
           '<span class="top-main"><span class="top-title">' + esc(titleOf(s)) + '</span><span class="top-sub">' + esc((s.date || '').slice(0, 4)) + ' · 均分 ' + esc(s.score || '—') + '</span></span>' +
           '<span class="top-score">' + c.rate + '<small>MY SCORE</small></span>' +
         '</a>';
@@ -1117,7 +1117,7 @@
     const items = stats.comments.map((c) => ({
       text: c.comment,
       cite: '《' + titleOf(c.subject) + '》',
-      img: imgSrc(c.subject),
+      img: imgSrc(c.subject, 'small'),
     }));
     if (items.length < 3 && CONTENT.quote) {
       items.push({ text: CONTENT.quote, cite: '关于这个页面', img: '' });
@@ -1378,9 +1378,9 @@
     if (el) el.textContent = text == null ? '' : text;
   }
 
-  function imgSrc(s) {
+  function imgSrc(s, size = 'common') {
     const im = (s && s.images) || {};
-    return im.common || im.medium || im.small || im.large || PH;
+    return im[size] || im.common || im.medium || im.small || im.large || PH;
   }
 
   function charImg(c) {
