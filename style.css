@@ -3412,6 +3412,8 @@ section[id] { scroll-margin-top: 92px; }
   .profile-card, .now-card, .fact-strip, .panel, .top-column, .number-row,
   .char-pic, .watch-row { box-shadow: none !important; background: #fff !important; }
   .profile-card, .now-card, .panel, .top-column { border: 1px solid #bbb; }
+  .fact-strip { display: none !important; }
+  .number-row, .char-card, .top-column, .panel, .now-card { break-inside: avoid; }
   .now-grid { gap: 3mm; }
   .now-card { break-inside: avoid; padding: 2mm; }
   .tag { background: #fff; box-shadow: none; }

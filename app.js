@@ -1188,6 +1188,19 @@
     root.style.scrollBehavior = previousBehavior;
   }
 
+  function printPage() {
+    const lazy = $$('img[loading="lazy"]');
+    lazy.forEach((img) => { img.loading = 'eager'; });
+    const pending = lazy.filter((img) => !img.complete).map((img) => new Promise((resolve) => {
+      img.addEventListener('load', resolve, { once: true });
+      img.addEventListener('error', resolve, { once: true });
+    }));
+    Promise.race([
+      Promise.all(pending),
+      new Promise((resolve) => setTimeout(resolve, 1500)),
+    ]).then(() => window.print());
+  }
+
   function bindChrome() {
     const menu = $('#menu');
     const button = $('#menu-button');
@@ -1274,7 +1287,7 @@
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
-    if (printBtn) printBtn.addEventListener('click', () => window.print());
+    if (printBtn) printBtn.addEventListener('click', printPage);
     window.addEventListener('beforeprint', () => {
       $$('img[loading="lazy"]').forEach((img) => { img.loading = 'eager'; });
     });
