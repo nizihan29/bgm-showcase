@@ -38,23 +38,15 @@
     <span class="brand-mark">K</span>
     <span class="brand-word"><strong>KOKO</strong><small>ACGN ARCHIVE</small></span>
   </a>
-  <nav class="head-nav" aria-label="主导航">
-    <a href="#profile">PROFILE</a>
-    <a href="#favorites">FAVORITES</a>
-    <a href="#records">RECORDS</a>
-    <a href="#archive">ARCHIVE</a>
-  </nav>
   <p class="head-status"><i aria-hidden="true"></i><span>DATA FROM BANGUMI</span></p>
 </header>
 
 <button class="menu-stamp" id="menu-button" type="button" aria-expanded="false" aria-controls="menu" aria-haspopup="dialog">
-    <svg class="stamp-ring" viewBox="0 0 100 100" aria-hidden="true">
-      <defs><path id="ring-path" d="M50,50 m-37,0 a37,37 0 1,1 74,0 a37,37 0 1,1 -74,0"></path></defs>
-      <text class="ring-open"><textPath href="#ring-path" startOffset="0" textLength="228" lengthAdjust="spacing">MENU · OPEN ·</textPath></text>
-      <text class="ring-close"><textPath href="#ring-path" startOffset="0" textLength="228" lengthAdjust="spacing">CLOSE ·</textPath></text>
-    </svg>
     <span class="stamp-bars" aria-hidden="true"><i></i><i></i><i></i></span>
-    <span class="stamp-edge" aria-hidden="true"><span class="edge-open">MENU</span><span class="edge-close">CLOSE</span></span>
+    <span class="stamp-label" aria-hidden="true">
+      <span class="label-menu"><i>M</i><i>E</i><i>N</i><i>U</i></span>
+      <span class="label-close"><i>C</i><i>L</i><i>O</i><i>S</i><i>E</i></span>
+    </span>
     <span class="sr-only">打开菜单</span>
   </button>
 
@@ -65,30 +57,29 @@
   <div class="menu-inner">
     <div class="menu-layout">
       <div class="menu-left">
-        <p class="menu-kicker">KOKO / ACGN ARCHIVE / 2026</p>
+        <p class="menu-kicker">PERSONAL ACGN ARCHIVE / 2026</p>
         <a class="menu-title" href="#top" aria-label="回到顶部">
           <span>可可</span>
           <span>糯米</span>
           <span>团子</span>
         </a>
+        <p class="menu-title-en">KOKO MOCHI DANGO</p>
+        <p class="menu-title-sub">ACGN ARCHIVE / COLLECTOR</p>
         <div class="menu-social" aria-label="社交链接"></div>
       </div>
 
       <nav class="menu-list" aria-label="全站导航">
-        <a class="menu-link" href="#profile"><span class="menu-en">PROFILE</span><span class="menu-jp" lang="ja">プロフィール</span></a>
-        <a class="menu-link" href="#feature"><span class="menu-en">FEATURED</span><span class="menu-jp" lang="ja">注目</span></a>
-        <a class="menu-link" href="#favorites"><span class="menu-en">FAVORITES</span><span class="menu-jp" lang="ja">お気に入り</span></a>
-        <a class="menu-link" href="#watching"><span class="menu-en">WATCHING</span><span class="menu-jp" lang="ja">視聴中</span></a>
-        <a class="menu-link" href="#wishlist"><span class="menu-en">WISHLIST</span><span class="menu-jp" lang="ja">観たいもの</span></a>
-        <a class="menu-link" href="#records"><span class="menu-en">RECORDS</span><span class="menu-jp" lang="ja">記録</span></a>
-        <a class="menu-link" href="#top-rated"><span class="menu-en">TOP RATED</span><span class="menu-jp" lang="ja">高評価</span></a>
-        <a class="menu-link" href="#archive"><span class="menu-en">ARCHIVE</span><span class="menu-jp" lang="ja">アーカイブ</span></a>
+        <a class="menu-link" href="#profile"><span class="menu-no">01</span><span class="menu-en">PROFILE</span><span class="menu-jp" lang="ja">プロフィール</span></a>
+        <a class="menu-link" href="#feature"><span class="menu-no">02</span><span class="menu-en">FEATURED</span><span class="menu-jp" lang="ja">注目</span></a>
+        <a class="menu-link" href="#favorites"><span class="menu-no">03</span><span class="menu-en">FAVORITES</span><span class="menu-jp" lang="ja">お気に入り</span></a>
+        <a class="menu-link" href="#watching"><span class="menu-no">04</span><span class="menu-en">WATCHING</span><span class="menu-jp" lang="ja">視聴中</span></a>
+        <a class="menu-link" href="#wishlist"><span class="menu-no">05</span><span class="menu-en">WISHLIST</span><span class="menu-jp" lang="ja">観たいもの</span></a>
+        <a class="menu-link" href="#records"><span class="menu-no">06</span><span class="menu-en">RECORDS</span><span class="menu-jp" lang="ja">記録</span></a>
+        <a class="menu-link" href="#top-rated"><span class="menu-no">07</span><span class="menu-en">TOP RATED</span><span class="menu-jp" lang="ja">高評価</span></a>
+        <a class="menu-link" href="#archive"><span class="menu-no">08</span><span class="menu-en">ARCHIVE</span><span class="menu-jp" lang="ja">アーカイブ</span></a>
       </nav>
     </div>
 
-    <div class="menu-foot">
-      <p>FAN-MADE, NOT AFFILIATED.<br>DATA © BANGUMI.TV</p>
-    </div>
   </div>
 </div>
 
@@ -425,13 +416,16 @@
       <p>KOKO</p>
       <span>ACGN ARCHIVE / 2026</span>
     </div>
-    <div class="footer-nav">
+    <nav class="footer-nav" aria-label="页脚导航">
       <a href="#profile">PROFILE</a>
+      <a href="#feature">FEATURED</a>
       <a href="#favorites">FAVORITES</a>
+      <a href="#watching">WATCHING</a>
       <a href="#wishlist">WISHLIST</a>
       <a href="#records">RECORDS</a>
+      <a href="#top-rated">TOP RATED</a>
       <a href="#archive">ARCHIVE</a>
-    </div>
+    </nav>
     <div class="footer-meta">
       <p title="最后一次抓取 Bangumi 数据的时间；收藏更新后需要重新运行 scripts/fetch_bgm.py">DATA SNAPSHOT<br><b id="snapshot-date">—</b></p>
       <p>POWERED BY <a href="https://bgm.tv" target="_blank" rel="noopener noreferrer">BANGUMI</a></p>
