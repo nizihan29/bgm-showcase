@@ -14,7 +14,7 @@
 
 ## 3. 社交链接
 - 菜单里现在是 BANGUMI / X / GITHUB。
-- BANGUMI 已连 `bgm.tv/user/m1n`；X 和 GitHub 还是平台首页占位，把你的主页地址给我即可。
+- 已连接：`bgm.tv/user/m1n`、`x.com/m1n645372`、`github.com/nizihan29`。
 
 ## 4. 页脚台词
 - 现在放了 8 条短台词（冰菓、命运石之门、巨人、EVA、小圆、春物、紫罗兰、CLANNAD），打字机循环播放。

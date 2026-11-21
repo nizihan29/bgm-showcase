@@ -62,8 +62,8 @@ window.SITE_CONTENT = {
   favoriteOrder: [3575, 24760, 19041, 14823, 53770],
   socials: [
     { label: 'BANGUMI', href: 'https://bgm.tv/user/m1n' },
-    { label: 'X', href: 'https://x.com/' },
-    { label: 'GITHUB', href: 'https://github.com/' },
+    { label: 'X', href: 'https://x.com/m1n645372' },
+    { label: 'GITHUB', href: 'https://github.com/nizihan29' },
   ],
   quotes: [
     { text: '我很好奇。', from: '《冰菓》千反田爱瑠' },

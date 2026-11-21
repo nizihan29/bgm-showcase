@@ -27,11 +27,11 @@ window.SITE_CONTENT = {
   /* 角色卡的顺序，按喜欢程度从高到低 */
   favoriteOrder: [3575, 24760, 19041, 14823, 53770],
 
-  /* 全屏菜单左侧的 SNS。X / GitHub 先占位，换成你的主页即可 */
+  /* 全屏菜单左侧的 SNS */
   socials: [
     { label: 'BANGUMI', href: 'https://bgm.tv/user/m1n' },
-    { label: 'X', href: 'https://x.com/' },
-    { label: 'GITHUB', href: 'https://github.com/' },
+    { label: 'X', href: 'https://x.com/m1n645372' },
+    { label: 'GITHUB', href: 'https://github.com/nizihan29' },
   ],
 
   /* 页脚随机台词。短句 + 出处，可自由替换 */
