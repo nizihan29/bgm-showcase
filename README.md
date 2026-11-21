@@ -98,6 +98,9 @@ python3 scripts/check_site.py
 
 ## 部署到 GitHub Pages
 
+当前线上：https://nizihan29.github.io/bgm-showcase/  
+仓库：https://github.com/nizihan29/bgm-showcase
+
 ```bash
 git add .
 git commit -m "feat: anime-official-site style ACGN archive"

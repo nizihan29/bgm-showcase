@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-11-21 — deployed
+
+- 已推送到 `nizihan29/bgm-showcase` 并发布到 GitHub Pages：https://nizihan29.github.io/bgm-showcase/。
+
 ## 2026-11-21 — feedback pass
 
 - 全屏菜单按官网思路重做：印章按钮嵌在右上角、圆外弧形 MENU / CLOSE，左站名 + 罗马音 + BANGUMI / X / GitHub，右编号 + 英文大标题 + 日文小注；去掉中文小字和 TOP。
