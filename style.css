@@ -3935,7 +3935,7 @@ section[id] { scroll-margin-top: 92px; }
   width: 190px;
   height: 190px;
 }
-.stamp-arc text { font-size: 26px; letter-spacing: 3px; }
+.stamp-arc text { font-size: 26px; letter-spacing: 7px; }
 
 .menu-title span.l3 { position: relative; }
 .menu-title span.l3::after { content: none; }
@@ -3968,7 +3968,7 @@ section[id] { scroll-margin-top: 92px; }
   .stamp-bars { width: 26px; gap: 6px; }
   .stamp-bars i { height: 2px; }
   .stamp-arc { inset: -32px; width: 156px; height: 156px; }
-  .stamp-arc text { font-size: 20px; letter-spacing: 2.5px; }
+  .stamp-arc text { font-size: 20px; letter-spacing: 5.5px; }
   .menu-stamp[aria-expanded="true"] .stamp-bars i:nth-child(1) { transform: translateY(8px) rotate(45deg); }
   .menu-stamp[aria-expanded="true"] .stamp-bars i:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
   .menu-title { font-size: clamp(2.4rem, 7.6vw, 3.1rem); }
@@ -3979,7 +3979,7 @@ section[id] { scroll-margin-top: 92px; }
   .menu-stamp { top: -18px; right: -18px; width: 76px; height: 76px; }
   .stamp-bars { width: 22px; gap: 5px; }
   .stamp-arc { inset: -28px; width: 132px; height: 132px; }
-  .stamp-arc text { font-size: 16px; letter-spacing: 2px; }
+  .stamp-arc text { font-size: 16px; letter-spacing: 4px; }
   .menu-stamp[aria-expanded="true"] .stamp-bars i:nth-child(1) { transform: translateY(7px) rotate(45deg); }
   .menu-stamp[aria-expanded="true"] .stamp-bars i:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
   .menu-title { font-size: 2.1rem; }
