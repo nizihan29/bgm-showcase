@@ -42,11 +42,15 @@
 </header>
 
 <button class="menu-stamp" id="menu-button" type="button" aria-expanded="false" aria-controls="menu" aria-haspopup="dialog">
+    <svg class="stamp-arc arc-menu" viewBox="0 0 200 200" aria-hidden="true">
+      <defs><path id="stamp-menu-path" d="M100,186 A86,86 0 0 1 100,14"></path></defs>
+      <text><textPath href="#stamp-menu-path" startOffset="50%" text-anchor="middle">MENU</textPath></text>
+    </svg>
+    <svg class="stamp-arc arc-close" viewBox="0 0 200 200" aria-hidden="true">
+      <defs><path id="stamp-close-path" d="M100,186 A86,86 0 0 1 100,14"></path></defs>
+      <text><textPath href="#stamp-close-path" startOffset="50%" text-anchor="middle">CLOSE</textPath></text>
+    </svg>
     <span class="stamp-bars" aria-hidden="true"><i></i><i></i><i></i></span>
-    <span class="stamp-label" aria-hidden="true">
-      <span class="label-menu"><i>M</i><i>E</i><i>N</i><i>U</i></span>
-      <span class="label-close"><i>C</i><i>L</i><i>O</i><i>S</i><i>E</i></span>
-    </span>
     <span class="sr-only">打开菜单</span>
   </button>
 
@@ -57,14 +61,15 @@
   <div class="menu-inner">
     <div class="menu-layout">
       <div class="menu-left">
-        <p class="menu-kicker">PERSONAL ACGN ARCHIVE / 2026</p>
-        <a class="menu-title" href="#top" aria-label="回到顶部">
-          <span>可可</span>
-          <span>糯米</span>
-          <span>团子</span>
-        </a>
+        <div class="menu-logo">
+          <span class="menu-k" aria-hidden="true">K</span>
+          <a class="menu-title" href="#top" aria-label="回到顶部">
+            <span class="l1">可可</span>
+            <span class="l2">糯米</span>
+            <span class="l3">团子</span>
+          </a>
+        </div>
         <p class="menu-title-en">KOKO MOCHI DANGO</p>
-        <p class="menu-title-sub">ACGN ARCHIVE / COLLECTOR</p>
         <div class="menu-social" aria-label="社交链接"></div>
       </div>
 
