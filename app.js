@@ -91,6 +91,7 @@
     initSpy();
     initSearchFromUrl();
     initDeepLink();
+    initSmoothAnchors();
     initQuoteRotator();
   }
 
@@ -1087,17 +1088,17 @@
     const type = async (q) => {
       for (let i = 1; i <= q.text.length; i++) {
         textEl.textContent = q.text.slice(0, i);
-        await wait(55);
+        await wait(85);
       }
       if (srEl) srEl.textContent = q.text + ' ' + (q.from || '');
-      await wait(2300);
+      await wait(3400);
     };
     const erase = async (q) => {
       for (let i = q.text.length; i >= 0; i--) {
         textEl.textContent = q.text.slice(0, i);
-        await wait(22);
+        await wait(38);
       }
-      await wait(260);
+      await wait(500);
     };
 
     (async () => {
@@ -1149,9 +1150,7 @@
     renderArchiveView();
 
     const target = $('#archive');
-    const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (target) target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
-    setTimeout(() => input.focus({ preventScroll: true }), reduce ? 0 : 700);
+    if (target) smoothScrollTo(targetYFor(target), 1000, () => input.focus({ preventScroll: true }));
   }
 
   function copyDetailLink() {
@@ -1270,6 +1269,82 @@
     ]).then(() => window.print());
   }
 
+  let scrollRaf = 0;
+  let scrollPrevBehavior = null;
+
+  function stopSmoothScroll() {
+    if (scrollRaf) {
+      cancelAnimationFrame(scrollRaf);
+      scrollRaf = 0;
+    }
+    if (scrollPrevBehavior !== null) {
+      document.documentElement.style.scrollBehavior = scrollPrevBehavior;
+      scrollPrevBehavior = null;
+    }
+  }
+
+  function targetYFor(target) {
+    const head = document.querySelector('.site-head');
+    const offset = head ? Math.max(64, head.offsetHeight + 18) : 90;
+    return Math.max(0, target.getBoundingClientRect().top + window.scrollY - offset);
+  }
+
+  function smoothScrollTo(targetY, duration = 1050, done) {
+    stopSmoothScroll();
+    const root = document.documentElement;
+    const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) {
+      const previous = root.style.scrollBehavior;
+      root.style.scrollBehavior = 'auto';
+      window.scrollTo(0, targetY);
+      root.style.scrollBehavior = previous;
+      if (done) done();
+      return;
+    }
+    const startY = window.scrollY;
+    const delta = targetY - startY;
+    if (Math.abs(delta) < 2) {
+      if (done) done();
+      return;
+    }
+    const start = performance.now();
+    const ease = (t) => (t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+    scrollPrevBehavior = root.style.scrollBehavior;
+    root.style.scrollBehavior = 'auto';
+    const step = (now) => {
+      const progress = Math.min(1, (now - start) / duration);
+      window.scrollTo(0, startY + delta * ease(progress));
+      if (progress < 1) {
+        scrollRaf = requestAnimationFrame(step);
+      } else {
+        scrollRaf = 0;
+        root.style.scrollBehavior = scrollPrevBehavior;
+        scrollPrevBehavior = null;
+        if (done) done();
+      }
+    };
+    scrollRaf = requestAnimationFrame(step);
+  }
+
+  function initSmoothAnchors() {
+    document.addEventListener('click', (event) => {
+      const link = event.target.closest('a[href^="#"]');
+      if (!link) return;
+      if (link.classList.contains('skip') || link.classList.contains('menu-link')) return;
+      if (link.dataset.tag || link.dataset.year) return;
+      const href = link.getAttribute('href') || '';
+      const id = href.slice(1);
+      if (!id) return;
+      const target = document.getElementById(id);
+      if (!target) return;
+      event.preventDefault();
+      smoothScrollTo(targetYFor(target), id === 'top' ? 1250 : 1050);
+      history.pushState(null, '', href);
+    });
+    window.addEventListener('wheel', stopSmoothScroll, { passive: true });
+    window.addEventListener('touchstart', stopSmoothScroll, { passive: true });
+  }
+
   function bindChrome() {
     const menu = $('#menu');
     const button = $('#menu-button');
@@ -1303,18 +1378,20 @@
         if (menu.classList.contains('is-open')) closeMenu();
         else openMenu();
       });
-      $$('.menu-link', menu).forEach((a) => a.addEventListener('click', () => {
+      $$('.menu-link', menu).forEach((a) => a.addEventListener('click', (event) => {
+        event.preventDefault();
         const href = a.getAttribute('href') || '';
         closeMenu(false);
         if (!href.startsWith('#')) return;
         const target = document.querySelector(href);
         if (!target) return;
-        const heading = target.querySelector('h1, h2');
-        if (!heading) return;
-        setTimeout(() => {
+        smoothScrollTo(targetYFor(target), 1050, () => {
+          const heading = target.querySelector('h1, h2');
+          if (!heading) return;
           heading.setAttribute('tabindex', '-1');
           heading.focus({ preventScroll: true });
-        }, 420);
+        });
+        history.pushState(null, '', href);
       }));
       const menuTitle = $('.menu-title', menu);
       if (menuTitle) menuTitle.addEventListener('click', () => closeMenu(true));
