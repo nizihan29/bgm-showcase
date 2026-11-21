@@ -20,7 +20,7 @@ REQUIRED_FILES = [
     "404.html", "robots.txt", ".nojekyll", "assets/preview.jpg",
     "site.webmanifest", "assets/icon-192.png", "assets/icon-512.png",
     "assets/apple-touch-icon.png", "assets/fonts/inter-subset.woff2",
-    "assets/fonts/mochiy-subset.woff2", "assets/fonts/noto-display.woff2",
+    "assets/fonts/mochiy-subset-2.woff2", "assets/fonts/noto-display.woff2",
     "scripts/fetch_bgm.py",
 ]
 DATA_COLLECTION_KEYS = {

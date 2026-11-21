@@ -47,12 +47,14 @@
   <p class="head-status"><i aria-hidden="true"></i><span>DATA FROM BANGUMI</span></p>
 </header>
 
-<button class="menu-stamp" id="menu-button" type="button" aria-expanded="false" aria-controls="menu">
+<button class="menu-stamp" id="menu-button" type="button" aria-expanded="false" aria-controls="menu" aria-haspopup="dialog">
     <svg class="stamp-ring" viewBox="0 0 100 100" aria-hidden="true">
       <defs><path id="ring-path" d="M50,50 m-37,0 a37,37 0 1,1 74,0 a37,37 0 1,1 -74,0"></path></defs>
-      <text><textPath href="#ring-path" startOffset="0" textLength="228" lengthAdjust="spacing">MENU · ARCHIVE ·</textPath></text>
+      <text class="ring-open"><textPath href="#ring-path" startOffset="0" textLength="228" lengthAdjust="spacing">MENU · OPEN ·</textPath></text>
+      <text class="ring-close"><textPath href="#ring-path" startOffset="0" textLength="228" lengthAdjust="spacing">CLOSE ·</textPath></text>
     </svg>
     <span class="stamp-bars" aria-hidden="true"><i></i><i></i><i></i></span>
+    <span class="stamp-edge" aria-hidden="true"><span class="edge-open">MENU</span><span class="edge-close">CLOSE</span></span>
     <span class="sr-only">打开菜单</span>
   </button>
 
@@ -61,28 +63,30 @@
   <div class="menu-pattern" aria-hidden="true"></div>
   <div class="menu-bigword" aria-hidden="true">ARCHIVE</div>
   <div class="menu-inner">
-    <div class="menu-head">
-      <a class="menu-brand" href="#top">
-        <strong>KOKO</strong>
-        <span>ACGN ARCHIVE / 2026</span>
-      </a>
-      <p class="menu-note">SELECT A SECTION<br>AND DIVE IN.</p>
-    </div>
-    <nav class="menu-list" aria-label="全站导航">
-      <a class="menu-link" href="#top" data-i="0"><span class="menu-no">00</span><span class="menu-en">TOP</span><span class="menu-zh">回到开头</span></a>
-      <a class="menu-link" href="#profile" data-i="1"><span class="menu-no">01</span><span class="menu-en">PROFILE</span><span class="menu-zh">关于我</span></a>
-      <a class="menu-link" href="#feature" data-i="2"><span class="menu-no">02</span><span class="menu-en">FEATURED</span><span class="menu-zh">最近沉迷</span></a>
-      <a class="menu-link" href="#favorites" data-i="3"><span class="menu-no">03</span><span class="menu-en">FAVORITES</span><span class="menu-zh">最爱角色</span></a>
-      <a class="menu-link" href="#watching" data-i="4"><span class="menu-no">04</span><span class="menu-en">WATCHING</span><span class="menu-zh">最近在看</span></a>
-      <a class="menu-link" href="#wishlist" data-i="5"><span class="menu-no">05</span><span class="menu-en">WISHLIST</span><span class="menu-zh">想看清单</span></a>
-      <a class="menu-link" href="#records" data-i="6"><span class="menu-no">06</span><span class="menu-en">RECORDS</span><span class="menu-zh">观看记录</span></a>
-      <a class="menu-link" href="#top-rated" data-i="7"><span class="menu-no">07</span><span class="menu-en">TOP RATED</span><span class="menu-zh">评分最高</span></a>
-      <a class="menu-link" href="#archive" data-i="8"><span class="menu-no">08</span><span class="menu-en">ARCHIVE</span><span class="menu-zh">收藏墙</span></a>
-    </nav>
-    <div class="menu-foot">
-      <div class="menu-social">
-        <a href="https://bgm.tv/user/m1n" target="_blank" rel="noopener noreferrer">BANGUMI ↗</a>
+    <div class="menu-layout">
+      <div class="menu-left">
+        <p class="menu-kicker">KOKO / ACGN ARCHIVE / 2026</p>
+        <a class="menu-title" href="#top" aria-label="回到顶部">
+          <span>可可</span>
+          <span>糯米</span>
+          <span>团子</span>
+        </a>
+        <div class="menu-social" aria-label="社交链接"></div>
       </div>
+
+      <nav class="menu-list" aria-label="全站导航">
+        <a class="menu-link" href="#profile"><span class="menu-en">PROFILE</span><span class="menu-jp" lang="ja">プロフィール</span></a>
+        <a class="menu-link" href="#feature"><span class="menu-en">FEATURED</span><span class="menu-jp" lang="ja">注目</span></a>
+        <a class="menu-link" href="#favorites"><span class="menu-en">FAVORITES</span><span class="menu-jp" lang="ja">お気に入り</span></a>
+        <a class="menu-link" href="#watching"><span class="menu-en">WATCHING</span><span class="menu-jp" lang="ja">視聴中</span></a>
+        <a class="menu-link" href="#wishlist"><span class="menu-en">WISHLIST</span><span class="menu-jp" lang="ja">観たいもの</span></a>
+        <a class="menu-link" href="#records"><span class="menu-en">RECORDS</span><span class="menu-jp" lang="ja">記録</span></a>
+        <a class="menu-link" href="#top-rated"><span class="menu-en">TOP RATED</span><span class="menu-jp" lang="ja">高評価</span></a>
+        <a class="menu-link" href="#archive"><span class="menu-en">ARCHIVE</span><span class="menu-jp" lang="ja">アーカイブ</span></a>
+      </nav>
+    </div>
+
+    <div class="menu-foot">
       <p>FAN-MADE, NOT AFFILIATED.<br>DATA © BANGUMI.TV</p>
     </div>
   </div>
@@ -144,7 +148,7 @@
       </div>
       <p class="hero-tagline" id="tagline"></p>
       <div class="hero-actions">
-        <a class="btn btn-red" href="#profile"><span>打开档案</span><b aria-hidden="true">↗</b></a>
+        <a class="btn btn-red" href="https://bgm.tv/user/m1n" target="_blank" rel="noopener noreferrer"><span>打开 BANGUMI</span><b aria-hidden="true">↗</b></a>
         <a class="btn btn-line" href="#records">看看数据</a>
       </div>
       <dl class="hero-stats" id="hero-stats">
@@ -211,7 +215,7 @@
         <div class="tag-row" id="profile-tags"></div>
         <div class="profile-foot">
           <span>STATUS: <b>OPEN</b></span>
-          <a href="https://bgm.tv/user/m1n/collections" target="_blank" rel="noopener noreferrer">全部收藏 ↗</a>
+          <a href="https://bgm.tv/user/m1n" target="_blank" rel="noopener noreferrer">BANGUMI 主页 ↗</a>
         </div>
       </article>
 
@@ -261,7 +265,6 @@
     </header>
 
     <div class="char-grid" id="char-grid"></div>
-    <p class="sec-footnote reveal">按喜欢程度排序，第 1 位是雷打不动的本命。</p>
   </section>
 
   <!-- ================= WATCHING ================= -->
@@ -292,7 +295,7 @@
         <button type="button" class="wish-random" id="wish-random" aria-label="从想看清单随机抽一部">
           <span>今晚看什么？</span><b>随机抽一部 ↻</b>
         </button>
-        <a class="wish-link" href="https://bgm.tv/user/m1n/collections" target="_blank" rel="noopener noreferrer">去 BANGUMI 看全部 <b aria-hidden="true">↗</b></a>
+        <a class="wish-link" href="https://bgm.tv/user/m1n" target="_blank" rel="noopener noreferrer">去 BANGUMI 主页 <b aria-hidden="true">↗</b></a>
       </aside>
 
       <div class="wish-shelf">
@@ -319,7 +322,6 @@
       <article class="panel panel-rating reveal">
         <div class="panel-head"><h3>评分分布</h3><span>RATING</span></div>
         <div class="rating-chart" id="rating-chart"></div>
-        <p class="panel-note" id="rating-note"></p>
       </article>
 
       <article class="panel panel-status reveal">
@@ -330,19 +332,16 @@
       <article class="panel panel-tags reveal">
         <div class="panel-head"><h3>口味关键词</h3><span>TASTE</span></div>
         <div class="tag-cloud" id="tag-cloud"></div>
-        <p class="panel-note">点击标签，去收藏墙筛选。</p>
       </article>
 
       <article class="panel panel-year reveal">
         <div class="panel-head"><h3>年份分布</h3><span>YEARS</span></div>
         <div class="year-chart" id="year-chart"></div>
-        <p class="panel-note">按作品首播 / 出版年份统计，2000 年以前合并；点击年份去收藏墙筛选。</p>
       </article>
 
       <article class="panel panel-studio reveal">
         <div class="panel-head"><h3>制作公司</h3><span>STUDIO / BY TAGS</span></div>
         <div class="studio-grid" id="studio-grid"></div>
-        <p class="panel-note">按收藏条目的制作公司标签统计，可能漏计；只展示出现最多的 8 家。</p>
       </article>
 
       <article class="panel panel-diff reveal">
@@ -350,11 +349,10 @@
         <div class="taste-grid">
           <div class="taste-scatter" id="taste-scatter"></div>
           <div class="taste-side">
-            <p class="taste-caption">分歧最大的 8 部 <span>8 BIGGEST GAPS</span></p>
+            <p class="taste-caption">分歧最大的 8 部</p>
             <div class="diff-list" id="deviation-list"></div>
           </div>
         </div>
-        <p class="panel-note" id="taste-note"></p>
       </article>
     </div>
   </section>
@@ -403,8 +401,8 @@
       </button>
     </div>
 
-    <a class="archive-more reveal" href="https://bgm.tv/user/m1n/collections" target="_blank" rel="noopener noreferrer">
-      <span>全部 1327 部收藏</span><b aria-hidden="true">↗</b>
+    <a class="archive-more reveal" href="https://bgm.tv/user/m1n" target="_blank" rel="noopener noreferrer">
+      <span>去 BANGUMI 主页</span><b aria-hidden="true">↗</b>
     </a>
   </section>
 
@@ -435,16 +433,20 @@
       <a href="#archive">ARCHIVE</a>
     </div>
     <div class="footer-meta">
-      <p>DATA SNAPSHOT<br><b id="snapshot-date">—</b></p>
+      <p title="最后一次抓取 Bangumi 数据的时间；收藏更新后需要重新运行 scripts/fetch_bgm.py">DATA SNAPSHOT<br><b id="snapshot-date">—</b></p>
       <p>POWERED BY <a href="https://bgm.tv" target="_blank" rel="noopener noreferrer">BANGUMI</a></p>
     </div>
   </div>
-  <p class="footer-manifesto">不是排行榜，也不是推荐算法。只是一个把喜欢过的东西留下来的地方。</p>
+  <div class="footer-quote" id="footer-quote">
+    <p class="footer-quote-label">QUOTE / 台词</p>
+    <p class="footer-quote-text"><span id="quote-text"></span><span class="quote-cursor" aria-hidden="true">▌</span></p>
+    <p class="footer-quote-from" id="quote-from"></p>
+    <p class="sr-only" id="quote-sr" aria-live="polite"></p>
+  </div>
   <div class="footer-bottom">
     <p>本页为个人兴趣展示，非官方站点。作品封面与角色画像版权归各自权利人所有。</p>
     <div class="footer-actions">
       <button type="button" class="print-link" id="print-page">打印 / PDF</button>
-      <a href="#top" class="to-top">BACK TO TOP <span aria-hidden="true">↑</span></a>
     </div>
   </div>
 </footer>

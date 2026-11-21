@@ -91,6 +91,7 @@
     initSpy();
     initSearchFromUrl();
     initDeepLink();
+    initQuoteRotator();
   }
 
   /* ---------------- stats ---------------- */
@@ -229,8 +230,9 @@
     if ($('#hero-quote-from')) $('#hero-quote-from').textContent = CONTENT.quoteFrom || 'BANGUMI SIGNATURE';
 
     const social = $('.menu-social');
-    if (social && CONTENT.links && CONTENT.links.length) {
-      social.innerHTML = CONTENT.links.map((l) => (
+    const links = CONTENT.socials || CONTENT.links;
+    if (social && links && links.length) {
+      social.innerHTML = links.map((l) => (
         '<a href="' + esc(l.href) + '" target="_blank" rel="noopener noreferrer">' + esc(l.label) + ' ↗</a>'
       )).join('');
     }
@@ -435,7 +437,6 @@
     box.innerHTML = FAVORITE_ORDER.map((id, i) => {
       const c = chars[String(id)];
       if (!c) return '';
-      const note = (CONTENT.characterNotes && CONTENT.characterNotes[id]) || '';
       const roman = charAlias(c, '罗马字') || ('CHARACTER ' + String(i + 1).padStart(2, '0'));
       return '<article class="char-card" style="--tilt:' + tilts[i % tilts.length] + ';--offset:' + offsets[i % offsets.length] + '">' +
         '<span class="char-no">' + String(i + 1).padStart(2, '0') + '</span>' +
@@ -447,7 +448,6 @@
         '<div class="char-info">' +
           '<p class="char-jp" lang="ja">' + esc(c.name || '') + '</p>' +
           '<h3 class="char-name">' + esc(charName(c)) + '</h3>' +
-          '<p class="char-note">' + esc(note) + '</p>' +
           '<dl class="char-meta">' +
             '<div><dt>BIRTH</dt><dd>' + esc(charInfo(c, '生日') || '—') + '</dd></div>' +
             '<div><dt>HEIGHT</dt><dd>' + esc(charInfo(c, '身高') || '—') + '</dd></div>' +
@@ -549,9 +549,6 @@
           '<span class="bar-x">' + score + '</span>' +
         '</div>';
       }).join('');
-    }
-    if ($('#rating-note')) {
-      $('#rating-note').textContent = fmtInt(stats.rated.length) + ' 部有评分 · 平均 ' + stats.avg.toFixed(2) + ' 分 · 只统计 4 分及以上';
     }
 
     const donut = $('#status-donut');
@@ -678,20 +675,14 @@
       '<text x="' + (W - m.r - 8) + '" y="' + (H - m.b - 8) + '" text-anchor="end" class="scatter-side-label">大众比我更喜欢 ↗</text>' +
       dots +
       '<text x="' + (W - m.r) + '" y="' + (H - 5) + '" text-anchor="end" class="scatter-axis-label">大众均分 →</text>' +
-      '<text x="14" y="' + (m.t + 4) + '" class="scatter-axis-label">我的评分 ↑</text>' +
+      '<text x="14" y="12" class="scatter-axis-label">我的评分 ↑</text>' +
     '</svg>' +
     '<div class="taste-legend">' +
       '<span><i style="background:#c7000a"></i>动画</span>' +
       '<span><i style="background:#0b8ea6"></i>书籍</span>' +
       '<span><i style="background:#b8860b"></i>游戏</span>' +
-      '<span class="taste-legend-count">' + fmtInt(points.length) + ' 个评分点</span>' +
     '</div>';
 
-    const note = $('#taste-note');
-    if (note) {
-      const sign = stats.avgDiff >= 0 ? '+' : '−';
-      note.textContent = fmtInt(points.length) + ' 个评分点 · 我的平均分与大众均分差 ' + sign + Math.abs(stats.avgDiff).toFixed(2) + ' 分 · 越靠上越喜欢，越靠右大众评价越高';
-    }
   }
 
   function renderTop(stats) {
@@ -1072,6 +1063,54 @@
     }
   }
 
+  function initQuoteRotator() {
+    const textEl = $('#quote-text');
+    const fromEl = $('#quote-from');
+    const srEl = $('#quote-sr');
+    const quotes = (CONTENT.quotes || []).filter((q) => q && q.text);
+    if (!textEl || !quotes.length) return;
+
+    const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const show = (q, typed) => {
+      textEl.textContent = typed;
+      fromEl.textContent = '— ' + (q.from || '');
+      if (srEl && typed === q.text) srEl.textContent = q.text + ' ' + (q.from || '');
+    };
+
+    let index = Math.floor(Math.random() * quotes.length);
+    if (reduced) {
+      show(quotes[index], quotes[index].text);
+      return;
+    }
+
+    const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+    const type = async (q) => {
+      for (let i = 1; i <= q.text.length; i++) {
+        textEl.textContent = q.text.slice(0, i);
+        await wait(55);
+      }
+      if (srEl) srEl.textContent = q.text + ' ' + (q.from || '');
+      await wait(2300);
+    };
+    const erase = async (q) => {
+      for (let i = q.text.length; i >= 0; i--) {
+        textEl.textContent = q.text.slice(0, i);
+        await wait(22);
+      }
+      await wait(260);
+    };
+
+    (async () => {
+      while (true) {
+        const q = quotes[index % quotes.length];
+        fromEl.textContent = '— ' + (q.from || '');
+        await type(q);
+        await erase(q);
+        index += 1;
+      }
+    })();
+  }
+
   function initStatsLinks() {
     const years = $('#year-chart');
     if (years && !years.dataset.bound) {
@@ -1277,6 +1316,8 @@
           heading.focus({ preventScroll: true });
         }, 420);
       }));
+      const menuTitle = $('.menu-title', menu);
+      if (menuTitle) menuTitle.addEventListener('click', () => closeMenu(true));
       document.addEventListener('keydown', (e) => {
         if (!menu.classList.contains('is-open')) return;
         if (e.key === 'Escape') { closeMenu(); return; }

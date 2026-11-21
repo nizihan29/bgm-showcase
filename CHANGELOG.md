@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2026-11-21 — feedback pass
+
+- 全屏菜单按官网思路重做：印章按钮嵌在右上角，左站名 + BANGUMI / X / GitHub，右英文大标题 + 日文小注；去掉中文小字、编号和 TOP。
+- 删除 FAVORITES 的解说词、每张角色卡的介绍、RECORDS 各模块的说明小字。
+- 页脚原本的宣言改成随机台词打字机；删掉重复的 BACK TO TOP，只保留浮动箭头。
+- 收藏链接从白屏的 `bgm.tv/user/m1n/collections` 改为可用的 `bgm.tv/user/m1n`；首屏主按钮改为打开 Bangumi 主页。
+- 口味地图的「我的评分」移到图表上方，不再和 10 分刻度重叠。
+- DATA SNAPSHOT 增加说明：它是最后一次抓取时间，收藏更新后需要重跑脚本；部署后每周 Actions 会自动刷新。
+
 ## 2026-11-21 — overnight rebuild
 
 ### 站点
@@ -27,4 +36,4 @@
 - 404 页仍用 Google Fonts CDN；主页面已经不用。
 - 没有 Service Worker / 离线缓存；封面与数据需要联网。
 - 没有 deploy，也没有绑定域名。
-- 个人简介、角色短句、音乐/圣地/社交链接等仍是可替换的默认值。
+- 个人简介、音乐/圣地/社交链接等仍是可替换的默认值；X / GitHub 目前是平台首页占位。

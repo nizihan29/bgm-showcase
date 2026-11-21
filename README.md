@@ -28,7 +28,7 @@ python3 -m http.server 8000
 | HERO | 站名、总收藏 / 评分 / 均分、封面拼贴、本命头像 | `profile` + `collections` + `featured` |
 | PROFILE | 头像、签名、简介、口味标签、四个“此刻”卡片 | `profile`、`collections`、`characters` |
 | FEATURED | 最近沉迷：《学生会也有洞！》专属大卡 | `featured` + 对应收藏 |
-| FAVORITES | 5 位最爱角色：生日、身高、血型、私货短句 | `characters` + `content.js` |
+| FAVORITES | 5 位最爱角色：生日、身高、血型 | `characters` |
 | WATCHING | 最近在看的进度、话数、更新时间 | `collections?type=3` |
 | WISHLIST | 472 部想看里的最近 8 部，横向书架 + 随机抽一部 | `collections?type=1` |
 | RECORDS | 总览数字、评分分布、收藏状态、年份分布、口味关键词、制作公司、口味散点图 + 评分分歧 | 全量收藏计算 |
@@ -48,7 +48,7 @@ python3 scripts/fetch_bgm.py
 - 换最爱角色：同时改 `scripts/fetch_bgm.py` 里的 `CHARACTER_IDS` 和 `content.js` 里的 `favoriteOrder`
 - 换 featured 作品：改 `scripts/fetch_bgm.py` 里的 `FEATURED_SUBJECT`，再改 `index.html` 里 `#feature-link` 的默认链接即可
 
-`data.json` 是提交进仓库的快照，所以页面不依赖实时 API。仓库里带了一条 GitHub Actions 定时任务（`.github/workflows/refresh-data.yml`），每周一自动跑脚本，数据有变化才提交；不需要的话删掉这个文件即可。
+`data.json` 是提交进仓库的快照，所以页面不依赖实时 API。页脚的 `DATA SNAPSHOT` 就是最后一次抓取时间；**收藏更新后不会自动出现在页面里**，需要重新跑一次脚本（或部署后等每周一的 Actions）。仓库里带了一条 GitHub Actions 定时任务（`.github/workflows/refresh-data.yml`），每周一自动跑脚本，数据有变化才提交；不需要的话删掉这个文件即可。
 
 ## 改“我”的部分
 
@@ -60,18 +60,24 @@ window.SITE_CONTENT = {
   intro: '关于我的简介',
   quote: '首屏小纸条 / 签名',
   favoriteOrder: [3575, 24760, 19041, 14823, 53770],
-  characterNotes: { 3575: '角色卡上的一句私货' },
-  links: [{ label: 'BANGUMI', href: 'https://bgm.tv/user/m1n' }],
+  socials: [
+    { label: 'BANGUMI', href: 'https://bgm.tv/user/m1n' },
+    { label: 'X', href: 'https://x.com/' },
+    { label: 'GITHUB', href: 'https://github.com/' },
+  ],
+  quotes: [
+    { text: '我很好奇。', from: '《冰菓》千反田爱瑠' },
+  ],
 };
 ```
 
-文件底部留了 TODO：最近循环的歌、喜欢的监督/公司/声优、圣地巡礼、三句想说的话、其他社交主页。想加板块时，先补数据，再加一个 `<section>` 和对应的 render 函数即可。
+文件底部留了 TODO：最近循环的歌、喜欢的监督/公司/声优、圣地巡礼、想换的台词、其他社交主页。想加板块时，先补数据，再加一个 `<section>` 和对应的 render 函数即可。
 
 ## 设计说明
 
 - **配色**：纸白 `#fbf8f1`、朱红 `#c7000a / #7d0000`、墨黑 `#1c1a17`，青色/粉色/黄色只做点缀。
 - **字体**：本地 subset 的 Inter（英文/数字）、Mochiy Pop One（静态日文小标签）、Noto Sans SC 900（首屏名字），总共约 44 KB；动态中文/日文回退系统字体。主页面不再依赖 Google Fonts（404 页仍保留 CDN 回退），字体授权文件在 `assets/fonts/`。
-- **菜单**：右上角印章按钮，环形 MENU 文字 + 三横；打开后全屏红底白点，菜单项逐条弹入，支持 Esc、焦点循环和滚动锁（用 `position: fixed` 保存/恢复位置，iOS 上也不会滚穿背景）。
+- **菜单**：右上角嵌在屏幕边缘的印章按钮，环形 MENU / CLOSE 文字 + 三横；打开后全屏红底白点，左侧是站名和 BANGUMI / X / GitHub，右侧是英文大标题 + 日文小注的目录，支持 Esc、焦点循环和滚动锁（用 `position: fixed` 保存/恢复位置，iOS 上也不会滚穿背景）。
 - **卡片**：白底、粗描边、硬阴影、轻微旋转和胶带；数据区保持白卡，先保证可读，再谈风格。
 - **动效**：滚动 reveal、跑马灯、柱状图生长、封面悬停；全部尊重 `prefers-reduced-motion`。
 - **响应式**：1440 / 1024 / 768 / 390 四档验证，Chromium / WebKit / Firefox 都过了一遍；平板的 5 张角色卡会重排成居中的 3+2。
